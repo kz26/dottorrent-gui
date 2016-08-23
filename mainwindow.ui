@@ -54,6 +54,9 @@
        </item>
        <item row="2" column="0">
         <widget class="QCheckBox" name="batchModeCheckBox">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, a torrent will be created for each directory and file one level below the input directory.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
           <string>Batch mode</string>
          </property>
@@ -96,26 +99,26 @@
       <property name="title">
        <string>Torrent options</string>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
         <widget class="QLabel" name="commentLabel">
          <property name="text">
           <string>Comment</string>
          </property>
         </widget>
        </item>
-       <item>
+       <item row="1" column="0" colspan="2">
         <widget class="QLineEdit" name="commentEdit"/>
        </item>
-       <item>
+       <item row="2" column="0">
         <widget class="QLabel" name="pieceSizeLabel">
          <property name="text">
           <string>Piece size</string>
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QSpinBox" name="pieceSizeSpinBox">
+       <item row="3" column="0">
+        <widget class="QComboBox" name="pieceSizeComboBox">
          <property name="maximumSize">
           <size>
            <width>100</width>
@@ -124,14 +127,21 @@
          </property>
         </widget>
        </item>
-       <item>
+       <item row="3" column="1">
+        <widget class="QLabel" name="pieceCountLabel">
+         <property name="text">
+          <string># pieces</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" colspan="2">
         <widget class="QCheckBox" name="privateTorrentCheckBox">
          <property name="text">
           <string>Private torrent (no DHT or peer exchange)</string>
          </property>
         </widget>
        </item>
-       <item>
+       <item row="5" column="0" colspan="2">
         <widget class="QCheckBox" name="md5CheckBox">
          <property name="text">
           <string>Compute MD5 hashes</string>
