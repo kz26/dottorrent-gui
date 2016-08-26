@@ -17,6 +17,26 @@ def _isChecked(checkbox):
     return checkbox.checkState() == QtCore.Qt.Checked
 
 
+class CreateTorrentQThread(QtCore.QThread):
+
+    progress_update = QtCore.pyqtSignal(str, int, int)
+
+    def __init__(self, torrent, save_path, include_md5=False):
+        super().__init__()
+        self.torrent = torrent
+        self.save_path = save_path
+        self.include_md5 = include_md5
+
+    def run(self):
+        def progress_callback(*args):
+            self.progress_update.emit(*args)
+
+        self.torrent.generate(include_md5=self.include_md5,
+                              callback=progress_callback)
+        with open(self.save_path, 'wb') as f:
+            self.torrent.save(f)
+
+
 class DottorrentGUI(Ui_MainWindow):
 
     def setupUi(self, MainWindow):
@@ -42,17 +62,26 @@ class DottorrentGUI(Ui_MainWindow):
         self.privateTorrentCheckBox.stateChanged.connect(
             self.privateTorrentChanged)
 
+        self.progressBar.hide()
         self.createButton.setEnabled(False)
+        self.createButton.clicked.connect(self.createButtonClicked)
+        self.cancelButton.hide()
+        self.cancelButton.clicked.connect(self.cancel_creation)
         self.resetButton.clicked.connect(lambda: self.setupUi(MainWindow))
+
+    def _statusBarMsg(self, msg):
+        self.MainWindow.statusBar().showMessage(msg)
 
     def inputTypeToggle(self):
         if self.fileRadioButton.isChecked():
             self.inputType = 'file'
             self.batchModeCheckBox.setCheckState(QtCore.Qt.Unchecked)
             self.batchModeCheckBox.setEnabled(False)
+            self.batchModeCheckBox.hide()
         else:
             self.inputType = 'directory'
             self.batchModeCheckBox.setEnabled(True)
+            self.batchModeCheckBox.show()
         self.inputEdit.setText('')
 
     def browseInput(self):
@@ -91,29 +120,80 @@ class DottorrentGUI(Ui_MainWindow):
             return
         ptail = os.path.split(self.torrent.path)[1]
         if self.inputType == 'file':
-            self.MainWindow.statusBar().showMessage(
+            self._statusBarMsg(
                 "{}: {}".format(ptail, humanfriendly.format_size(t_info[0])))
         else:
-            self.MainWindow.statusBar().showMessage(
+            self._statusBarMsg(
                 "{}: {} files, {}".format(
                     ptail, t_info[1], humanfriendly.format_size(t_info[0])))
         self.pieceSizeComboBox.setCurrentIndex(PIECE_SIZES.index(t_info[2]))
-        self.updatePieceCountDisplay(t_info[3])
+        self.updatePieceCountLabel(t_info[3])
+        self.pieceCountLabel.show()
         self.createButton.setEnabled(True)
 
     def pieceSizeChanged(self, index):
         if getattr(self, 'torrent', None):
             self.torrent.piece_size = PIECE_SIZES[index]
             t_info = self.torrent.get_info()
-            self.updatePieceCountDisplay(t_info[3])
+            self.updatePieceCountLabel(t_info[3])
 
-    def updatePieceCountDisplay(self, pc):
+    def updatePieceCountLabel(self, pc):
         self.pieceCountLabel.setText("{} pieces".format(pc))
-        self.pieceCountLabel.show()
 
     def privateTorrentChanged(self, state):
         if getattr(self, 'torrent', None):
             self.torrent.private = (state == QtCore.Qt.Checked)
+
+    def createButtonClicked(self):
+        if _isChecked(self.batchModeCheckBox):
+            pass
+        else:
+            self.createTorrent()
+
+    def createTorrent(self):
+        fn = QtWidgets.QFileDialog.getSaveFileName(
+            self.MainWindow, 'Save torrent', None,
+            filter=('Torrent (*.torrent)'))
+        if fn[0]:
+            self.creation_thread = CreateTorrentQThread(
+                self.torrent,
+                fn[0],
+                _isChecked(self.md5CheckBox))
+            self.creation_thread.started.connect(
+                self.creation_started)
+            self.creation_thread.progress_update.connect(
+                self._progress_update)
+            self.creation_thread.finished.connect(
+                self.creation_finished)
+            self.creation_thread.start()
+
+    def cancel_creation(self):
+        thread = getattr(self, 'creation_thread', None)
+
+    def _progress_update(self, fn, pc, pt):
+        fn = os.path.split(fn)[1]
+        msg = "{} ({}/{})".format(fn, pc, pt)
+        self.updateProgress(msg, int(round(100 * pc / pt)))
+
+    def _progress_update_batch(self, fn, tc, tt):
+        pass
+
+    def updateProgress(self, statusMsg, pv):
+        self._statusBarMsg(statusMsg)
+        self.progressBar.setValue(pv)
+
+    def creation_started(self):
+        self.progressBar.show()
+        self.createButton.hide()
+        self.cancelButton.show()
+        self.resetButton.setEnabled(False)
+
+    def creation_finished(self):
+        self.progressBar.hide()
+        self.createButton.show()
+        self.cancelButton.hide()
+        self.resetButton.setEnabled(True)
+        self._statusBarMsg('Finished')
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
