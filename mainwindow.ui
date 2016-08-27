@@ -100,20 +100,10 @@
        <string>Torrent options</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <widget class="QLabel" name="commentLabel">
+       <item row="3" column="1">
+        <widget class="QLabel" name="pieceCountLabel">
          <property name="text">
-          <string>Comment</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QLineEdit" name="commentEdit"/>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="pieceSizeLabel">
-         <property name="text">
-          <string>Piece size</string>
+          <string># pieces</string>
          </property>
         </widget>
        </item>
@@ -127,26 +117,36 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
-        <widget class="QLabel" name="pieceCountLabel">
+       <item row="7" column="0" colspan="2">
+        <widget class="QCheckBox" name="md5CheckBox">
          <property name="text">
-          <string># pieces</string>
+          <string>Compute MD5 hashes</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="0" colspan="2">
+       <item row="2" column="0">
+        <widget class="QLabel" name="pieceSizeLabel">
+         <property name="text">
+          <string>Piece size</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0" colspan="2">
         <widget class="QCheckBox" name="privateTorrentCheckBox">
          <property name="text">
           <string>Private torrent (no DHT or peer exchange)</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="0" colspan="2">
-        <widget class="QCheckBox" name="md5CheckBox">
+       <item row="4" column="0">
+        <widget class="QLabel" name="commentLabel">
          <property name="text">
-          <string>Compute MD5 hashes</string>
+          <string>Comment</string>
          </property>
         </widget>
+       </item>
+       <item row="5" column="0" colspan="2">
+        <widget class="QLineEdit" name="commentEdit"/>
        </item>
       </layout>
      </widget>
@@ -198,8 +198,8 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionImport_profile"/>
-    <addaction name="actionExport_profile"/>
+    <addaction name="actionImportProfile"/>
+    <addaction name="actionExportProfile"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -213,12 +213,12 @@
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionImport_profile">
+  <action name="actionImportProfile">
    <property name="text">
     <string>Import profile...</string>
    </property>
   </action>
-  <action name="actionExport_profile">
+  <action name="actionExportProfile">
    <property name="text">
     <string>Export profile...</string>
    </property>

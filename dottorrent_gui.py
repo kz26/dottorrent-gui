@@ -3,12 +3,14 @@
 from datetime import datetime
 import os
 import sys
+import traceback
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import dottorrent
 import humanfriendly
 
 from ui_mainwindow import Ui_MainWindow
+from ui_about import Ui_AboutDialog
 from version import __version__
 
 
@@ -53,6 +55,8 @@ class DottorrentGUI(Ui_MainWindow):
         self.torrent = None
         self.MainWindow = MainWindow
 
+        self.actionAbout.triggered.connect(self.showAboutDialog)
+
         self.fileRadioButton.toggled.connect(self.inputTypeToggle)
         self.fileRadioButton.setChecked(True)
         self.directoryRadioButton.toggled.connect(self.inputTypeToggle)
@@ -82,6 +86,15 @@ class DottorrentGUI(Ui_MainWindow):
 
     def _statusBarMsg(self, msg):
         self.MainWindow.statusBar().showMessage(msg)
+
+    def showAboutDialog(self):
+        qdlg = QtWidgets.QDialog()
+        ad = Ui_AboutDialog()
+        ad.setupUi(qdlg)
+        ad.programVersionLabel.setText("version {}".format(__version__))
+        ad.dtVersionLabel.setText("(dottorrent {})".format(
+            dottorrent.__version__))
+        qdlg.exec_()
 
     def inputTypeToggle(self):
         if self.fileRadioButton.isChecked():
@@ -129,6 +142,7 @@ class DottorrentGUI(Ui_MainWindow):
             errdlg = QtWidgets.QErrorMessage()
             errdlg.showMessage(str(e))
             errdlg.exec_()
+            traceback.print_exc()
             return
         ptail = os.path.split(self.torrent.path)[1]
         if self.inputType == 'file':
