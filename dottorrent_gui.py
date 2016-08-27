@@ -21,20 +21,20 @@ class CreateTorrentQThread(QtCore.QThread):
 
     progress_update = QtCore.pyqtSignal(str, int, int)
 
-    def __init__(self, torrent, save_path, include_md5=False):
+    def __init__(self, torrent, save_path):
         super().__init__()
         self.torrent = torrent
         self.save_path = save_path
-        self.include_md5 = include_md5
 
     def run(self):
         def progress_callback(*args):
             self.progress_update.emit(*args)
+            return self.isInterruptionRequested()
 
-        self.torrent.generate(include_md5=self.include_md5,
-                              callback=progress_callback)
-        with open(self.save_path, 'wb') as f:
-            self.torrent.save(f)
+        self.success = self.torrent.generate(callback=progress_callback)
+        if self.success:
+	        with open(self.save_path, 'wb') as f:
+	            self.torrent.save(f)
 
 
 class DottorrentGUI(Ui_MainWindow):
@@ -157,8 +157,7 @@ class DottorrentGUI(Ui_MainWindow):
         if fn[0]:
             self.creation_thread = CreateTorrentQThread(
                 self.torrent,
-                fn[0],
-                _isChecked(self.md5CheckBox))
+                fn[0])
             self.creation_thread.started.connect(
                 self.creation_started)
             self.creation_thread.progress_update.connect(
@@ -168,7 +167,7 @@ class DottorrentGUI(Ui_MainWindow):
             self.creation_thread.start()
 
     def cancel_creation(self):
-        thread = getattr(self, 'creation_thread', None)
+        self.creation_thread.requestInterruption()
 
     def _progress_update(self, fn, pc, pt):
         fn = os.path.split(fn)[1]
@@ -193,7 +192,11 @@ class DottorrentGUI(Ui_MainWindow):
         self.createButton.show()
         self.cancelButton.hide()
         self.resetButton.setEnabled(True)
-        self._statusBarMsg('Finished')
+        if self.creation_thread.success:
+        	self._statusBarMsg('Finished')
+        else:
+        	self._statusBarMsg('Canceled')
+        self.creation_thread = None
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
