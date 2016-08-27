@@ -55,7 +55,7 @@
        <item row="2" column="0">
         <widget class="QCheckBox" name="batchModeCheckBox">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, a torrent will be created for each directory and file one level below the input directory. Piece size for each torrent will be determined automatically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, a torrent will be created for each directory and file one level below the input directory. The piece size for each torrent will be determined automatically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
           <string>Batch mode</string>
@@ -82,14 +82,14 @@
         <widget class="QPlainTextEdit" name="trackerEdit"/>
        </item>
        <item>
-        <widget class="QLabel" name="httpSeedLabel">
+        <widget class="QLabel" name="webSeedLabel">
          <property name="text">
-          <string>HTTP seeds (one per line)</string>
+          <string>HTTP/FTP seeds (one per line)</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPlainTextEdit" name="httpSeedEdit"/>
+        <widget class="QPlainTextEdit" name="webSeedEdit"/>
        </item>
       </layout>
      </widget>

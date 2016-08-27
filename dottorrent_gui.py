@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 
+from datetime import datetime
 import os
 import sys
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from dottorrent import Torrent
+import dottorrent
 import humanfriendly
 
 from ui_mainwindow import Ui_MainWindow
+from version import __version__
 
+
+PROGRAM_NAME = "dottorrent-gui {}".format(__version__)
 
 PIECE_SIZES = [2 ** i for i in range(14, 23)]
 
@@ -31,16 +35,20 @@ class CreateTorrentQThread(QtCore.QThread):
             self.progress_update.emit(*args)
             return self.isInterruptionRequested()
 
+        self.torrent.creation_date = datetime.now()
+        self.torrent.created_by = "{} ({})".format(
+            PROGRAM_NAME, dottorrent.DEFAULT_CREATOR)
         self.success = self.torrent.generate(callback=progress_callback)
         if self.success:
-	        with open(self.save_path, 'wb') as f:
-	            self.torrent.save(f)
+            with open(self.save_path, 'wb') as f:
+                self.torrent.save(f)
 
 
 class DottorrentGUI(Ui_MainWindow):
 
     def setupUi(self, MainWindow):
         super().setupUi(MainWindow)
+        MainWindow.setWindowTitle(PROGRAM_NAME)
 
         self.torrent = None
         self.MainWindow = MainWindow
@@ -61,6 +69,9 @@ class DottorrentGUI(Ui_MainWindow):
 
         self.privateTorrentCheckBox.stateChanged.connect(
             self.privateTorrentChanged)
+
+        self.md5CheckBox.stateChanged.connect(
+            self.md5Changed)
 
         self.progressBar.hide()
         self.createButton.setEnabled(False)
@@ -108,9 +119,10 @@ class DottorrentGUI(Ui_MainWindow):
             self.pieceCountLabel.show()
 
     def initializeTorrent(self):
-        self.torrent = Torrent(
+        self.torrent = dottorrent.Torrent(
             self.inputEdit.text(),
-            private=_isChecked(self.privateTorrentCheckBox))
+            private=_isChecked(self.privateTorrentCheckBox),
+            comment=self.commentEdit.text())
         try:
             t_info = self.torrent.get_info()
         except Exception as e:
@@ -131,6 +143,10 @@ class DottorrentGUI(Ui_MainWindow):
         self.pieceCountLabel.show()
         self.createButton.setEnabled(True)
 
+    def commentEdited(self, comment):
+        if getattr(self, 'torrent', None):
+            self.torrent.comment = comment
+
     def pieceSizeChanged(self, index):
         if getattr(self, 'torrent', None):
             self.torrent.piece_size = PIECE_SIZES[index]
@@ -144,15 +160,32 @@ class DottorrentGUI(Ui_MainWindow):
         if getattr(self, 'torrent', None):
             self.torrent.private = (state == QtCore.Qt.Checked)
 
+    def md5Changed(self, state):
+        if getattr(self, 'torrent', None):
+            self.torrent.include_md5 = (state == QtCore.Qt.Checked)
+
     def createButtonClicked(self):
+        # Validate trackers and web seed URLs
+        trackers = self.trackerEdit.toPlainText().split()
+        web_seeds = self.webSeedEdit.toPlainText().split()
+        try:
+            self.torrent.trackers = trackers
+            self.torrent.web_seeds = web_seeds
+        except Exception as e:
+            errdlg = QtWidgets.QErrorMessage()
+            errdlg.showMessage(str(e))
+            errdlg.exec_()
+            return
         if _isChecked(self.batchModeCheckBox):
             pass
         else:
             self.createTorrent()
 
     def createTorrent(self):
+        save_fn = os.path.splitext(
+            os.path.split(self.inputEdit.text())[1])[0] + '.torrent'
         fn = QtWidgets.QFileDialog.getSaveFileName(
-            self.MainWindow, 'Save torrent', None,
+            self.MainWindow, 'Save torrent', save_fn,
             filter=('Torrent (*.torrent)'))
         if fn[0]:
             self.creation_thread = CreateTorrentQThread(
@@ -182,20 +215,26 @@ class DottorrentGUI(Ui_MainWindow):
         self.progressBar.setValue(pv)
 
     def creation_started(self):
+        self.inputGroupBox.setEnabled(False)
+        self.seedingGroupBox.setEnabled(False)
+        self.optionGroupBox.setEnabled(False)
         self.progressBar.show()
         self.createButton.hide()
         self.cancelButton.show()
         self.resetButton.setEnabled(False)
 
     def creation_finished(self):
+        self.inputGroupBox.setEnabled(True)
+        self.seedingGroupBox.setEnabled(True)
+        self.optionGroupBox.setEnabled(True)
         self.progressBar.hide()
         self.createButton.show()
         self.cancelButton.hide()
         self.resetButton.setEnabled(True)
         if self.creation_thread.success:
-        	self._statusBarMsg('Finished')
+            self._statusBarMsg('Finished')
         else:
-        	self._statusBarMsg('Canceled')
+            self._statusBarMsg('Canceled')
         self.creation_thread = None
 
 if __name__ == "__main__":
