@@ -46,6 +46,42 @@ class CreateTorrentQThread(QtCore.QThread):
                 self.torrent.save(f)
 
 
+class CreateTorrentBatchQThread(QtCore.QThread):
+
+    progress_update = QtCore.pyqtSignal(str, int, int)
+
+    def __init__(self, path, save_dir, trackers, web_seeds,
+                 private, comment, include_md5):
+        self.path = path
+        salf.save_dir = save_dir
+        self.trackers = trackers
+        self.web_seeds = web_seeds
+        self.private = private
+        self.comment = comment
+        self.include_md5 = include_md5
+
+    def run(self):
+        def callback(*args):
+            return self.isInterruptionRequested()
+
+        entries = os.listdir(self.path):
+        for i, p in enumerate(entries):
+            p = os.path.join(self.path, p)
+            sfn = os.path.split(p)[1] + '.torrent'
+            self.progress_update.emit(sfn, i, len(entries))
+            t = dottorrent.Torrent(
+                p,
+                trackers=self.trackers,
+                web_seeds=self.web_seeds,
+                private=self.private,
+                comment=self.comment,
+                include_md5=self.include_md5)
+            success = t.generate(callback=callback)
+            if self.isInterruptionRequested():
+                return
+            t.save(os.path.join(self.save_path, sfn))
+
+
 class DottorrentGUI(Ui_MainWindow):
 
     def setupUi(self, MainWindow):
@@ -180,8 +216,8 @@ class DottorrentGUI(Ui_MainWindow):
 
     def createButtonClicked(self):
         # Validate trackers and web seed URLs
-        trackers = self.trackerEdit.toPlainText().split()
-        web_seeds = self.webSeedEdit.toPlainText().split()
+        trackers = self.trackerEdit.toPlainText().strip().split()
+        web_seeds = self.webSeedEdit.toPlainText().strip().split()
         try:
             self.torrent.trackers = trackers
             self.torrent.web_seeds = web_seeds
@@ -191,7 +227,7 @@ class DottorrentGUI(Ui_MainWindow):
             errdlg.exec_()
             return
         if _isChecked(self.batchModeCheckBox):
-            pass
+            self.createTorrentBatch()
         else:
             self.createTorrent()
 
@@ -200,7 +236,7 @@ class DottorrentGUI(Ui_MainWindow):
             os.path.split(self.inputEdit.text())[1])[0] + '.torrent'
         fn = QtWidgets.QFileDialog.getSaveFileName(
             self.MainWindow, 'Save torrent', save_fn,
-            filter=('Torrent (*.torrent)'))
+            filter=('Torrent file (*.torrent)'))
         if fn[0]:
             self.creation_thread = CreateTorrentQThread(
                 self.torrent,
@@ -212,6 +248,9 @@ class DottorrentGUI(Ui_MainWindow):
             self.creation_thread.finished.connect(
                 self.creation_finished)
             self.creation_thread.start()
+
+    def createTorrentBatch(self):
+        pass
 
     def cancel_creation(self):
         self.creation_thread.requestInterruption()
