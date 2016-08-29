@@ -14,7 +14,7 @@ setup(
     author="Kevin Zhang",
     author_email="kevin@kevinzhang.me",
     description="An advanced GUI torrent file creator with batch functionality, powered by PyQt and dottorrent",
-    # long_description=open('README.rst').read(),
+    long_description=open('README.rst').read(),
     keywords="bittorrent torrent",
     url="https://github.com/kz26/dottorrent-gui",   # project home page, if any
 
