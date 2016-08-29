@@ -204,8 +204,8 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionImportProfile"/>
-    <addaction name="actionExportProfile"/>
+    <addaction name="actionImportTrackers"/>
+    <addaction name="actionExportTrackers"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -219,14 +219,20 @@
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionImportProfile">
+  <action name="actionImportTrackers">
    <property name="text">
-    <string>Import profile...</string>
+    <string>Import trackers...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="actionExportProfile">
+  <action name="actionExportTrackers">
    <property name="text">
-    <string>Export profile...</string>
+    <string>Export trackers...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionAbout">
@@ -237,6 +243,9 @@
   <action name="actionQuit">
    <property name="text">
     <string>Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
   </action>
  </widget>

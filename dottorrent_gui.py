@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 from datetime import datetime
+import json
 import os
 import sys
-import traceback
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import dottorrent
@@ -96,7 +96,10 @@ class DottorrentGUI(Ui_MainWindow):
         self.torrent = None
         self.MainWindow = MainWindow
 
+        self.actionImportTrackers.triggered.connect(self.import_trackers)
+        self.actionExportTrackers.triggered.connect(self.export_trackers)
         self.actionAbout.triggered.connect(self.showAboutDialog)
+        self.actionQuit.triggered.connect(self.MainWindow.close)
 
         self.fileRadioButton.toggled.connect(self.inputTypeToggle)
         self.fileRadioButton.setChecked(True)
@@ -152,9 +155,9 @@ class DottorrentGUI(Ui_MainWindow):
     def browseInput(self):
         if self.inputType == 'file':
             fn = QtWidgets.QFileDialog.getOpenFileName(
-                self.MainWindow, 'Select file')
-            if fn[0]:
-                self.inputEdit.setText(fn[0])
+                self.MainWindow, 'Select file')[0]
+            if fn:
+                self.inputEdit.setText(fn)
         else:
             dn = QtWidgets.QFileDialog.getExistingDirectory(
                 self.MainWindow, 'Select directory')
@@ -182,9 +185,9 @@ class DottorrentGUI(Ui_MainWindow):
         except Exception as e:
             self.torrent = None
             errdlg = QtWidgets.QErrorMessage()
+            errdlg.setWindowTitle('Error')
             errdlg.showMessage(str(e))
             errdlg.exec_()
-            traceback.print_exc()
             return
         ptail = os.path.split(self.torrent.path)[1]
         if self.inputType == 'file':
@@ -229,6 +232,7 @@ class DottorrentGUI(Ui_MainWindow):
             self.torrent.web_seeds = web_seeds
         except Exception as e:
             errdlg = QtWidgets.QErrorMessage()
+            errdlg.setWindowTitle('Error')
             errdlg.showMessage(str(e))
             errdlg.exec_()
             return
@@ -242,11 +246,11 @@ class DottorrentGUI(Ui_MainWindow):
             os.path.split(self.inputEdit.text())[1])[0] + '.torrent'
         fn = QtWidgets.QFileDialog.getSaveFileName(
             self.MainWindow, 'Save torrent', save_fn,
-            filter=('Torrent file (*.torrent)'))
-        if fn[0]:
+            filter=('Torrent file (*.torrent)'))[0]
+        if fn:
             self.creation_thread = CreateTorrentQThread(
                 self.torrent,
-                fn[0])
+                fn)
             self.creation_thread.started.connect(
                 self.creation_started)
             self.creation_thread.progress_update.connect(
@@ -316,6 +320,50 @@ class DottorrentGUI(Ui_MainWindow):
         else:
             self._statusBarMsg('Canceled')
         self.creation_thread = None
+
+    def export_trackers(self):
+
+        fn = QtWidgets.QFileDialog.getSaveFileName(
+            self.MainWindow, 'Save tracker profile', None,
+            filter=('JSON configuration file (*.json)'))[0]
+        if fn:
+            trackers = self.trackerEdit.toPlainText().strip().split()
+            web_seeds = self.webSeedEdit.toPlainText().strip().split()
+            private = _isChecked(self.privateTorrentCheckBox)
+            data = {
+                'trackers': trackers,
+                'web_seeds': web_seeds,
+                'private': private
+            }
+            with open(fn, 'w') as f:
+                json.dump(data, f, indent=4, sort_keys=True)
+            self._statusBarMsg("Tracker profile saved to " + fn)
+
+    def import_trackers(self):
+        fn = QtWidgets.QFileDialog.getOpenFileName(
+            self.MainWindow, 'Open tracker profile',
+            filter=('JSON configuration file (*.json)'))[0]
+        if fn:
+            with open(fn) as f:
+                data = json.load(f)
+            trackers = data.get('trackers', [])
+            web_seeds = data.get('web_seeds', [])
+            private = data.get('private', False)
+            try:
+                ts = os.linesep.join(trackers)
+                self.trackerEdit.setPlainText(ts)
+                ws = os.linesep.join(web_seeds)
+                self.webSeedEdit.setPlainText(ws)
+                self.privateTorrentCheckBox.setChecked(private)
+            except Exception as e:
+                errdlg = QtWidgets.QErrorMessage()
+                errdlg.setWindowTitle('Error')
+                errdlg.showMessage(str(e))
+                errdlg.exec_()
+                return
+            self._statusBarMsg("Tracker profile {} loaded".format(
+                os.path.split(fn)[1]))
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

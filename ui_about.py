@@ -11,7 +11,15 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_AboutDialog(object):
     def setupUi(self, AboutDialog):
         AboutDialog.setObjectName("AboutDialog")
-        AboutDialog.resize(372, 226)
+        AboutDialog.setWindowModality(QtCore.Qt.WindowModal)
+        AboutDialog.resize(567, 231)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(AboutDialog.sizePolicy().hasHeightForWidth())
+        AboutDialog.setSizePolicy(sizePolicy)
+        AboutDialog.setMinimumSize(QtCore.QSize(567, 231))
+        AboutDialog.setMaximumSize(QtCore.QSize(567, 231))
         self.verticalLayout = QtWidgets.QVBoxLayout(AboutDialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.programNameLabel = QtWidgets.QLabel(AboutDialog)
