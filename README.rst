@@ -35,4 +35,4 @@ License
 -------
 
 © 2016 Kevin Zhang. Made available under the terms of the
-`<GNU General Public License v3> http://choosealicense.com/licenses/gpl-3.0/`_.
+`GNU General Public License v3 <http://choosealicense.com/licenses/gpl-3.0/>`_.
