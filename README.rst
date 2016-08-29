@@ -14,6 +14,7 @@ Features
 * Fast (capable of several hundred MB/s)
 * Cross-platform
 * Full Unicode support
+* Automatic piece size selection
 * Import and export of tracker profiles
 * Batch torrent creation mode
 
