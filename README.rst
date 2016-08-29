@@ -5,7 +5,16 @@ dottorrent-gui
 An advanced GUI torrent file creator with batch functionality, powered by PyQt and
 `dottorrent <https://github.com/kz26/dottorrent>`_
 
-.. img:: img/screenshot1.png
+.. image:: img/screenshot1.png
+
+--------
+Features
+--------
+
+* Fast (capable of several hundred MB/s)
+* Cross-platform
+* Full Unicode support
+* Import and export of tracker profiles
 
 ------------
 Installation
