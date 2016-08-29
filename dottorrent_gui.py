@@ -15,6 +15,8 @@ from version import __version__
 
 
 PROGRAM_NAME = "dottorrent-gui {}".format(__version__)
+CREATOR = "dottorrent-gui/{} dottorrent/{}".format(
+    __version__, dottorrent.__version__)
 
 PIECE_SIZES = [2 ** i for i in range(14, 23)]
 
@@ -38,8 +40,7 @@ class CreateTorrentQThread(QtCore.QThread):
             return self.isInterruptionRequested()
 
         self.torrent.creation_date = datetime.now()
-        self.torrent.created_by = "{} ({})".format(
-            PROGRAM_NAME, dottorrent.DEFAULT_CREATOR)
+        self.torrent.created_by = CREATOR
         self.success = self.torrent.generate(callback=progress_callback)
         if self.success:
             with open(self.save_path, 'wb') as f:
@@ -52,8 +53,9 @@ class CreateTorrentBatchQThread(QtCore.QThread):
 
     def __init__(self, path, save_dir, trackers, web_seeds,
                  private, comment, include_md5):
+        super().__init__()
         self.path = path
-        salf.save_dir = save_dir
+        self.save_dir = save_dir
         self.trackers = trackers
         self.web_seeds = web_seeds
         self.private = private
@@ -64,7 +66,7 @@ class CreateTorrentBatchQThread(QtCore.QThread):
         def callback(*args):
             return self.isInterruptionRequested()
 
-        entries = os.listdir(self.path):
+        entries = os.listdir(self.path)
         for i, p in enumerate(entries):
             p = os.path.join(self.path, p)
             sfn = os.path.split(p)[1] + '.torrent'
@@ -75,11 +77,14 @@ class CreateTorrentBatchQThread(QtCore.QThread):
                 web_seeds=self.web_seeds,
                 private=self.private,
                 comment=self.comment,
-                include_md5=self.include_md5)
-            success = t.generate(callback=callback)
+                include_md5=self.include_md5,
+                creation_date=datetime.now(),
+                created_by=CREATOR)
+            self.success = t.generate(callback=callback)
             if self.isInterruptionRequested():
                 return
-            t.save(os.path.join(self.save_path, sfn))
+            with open(os.path.join(self.save_dir, sfn), 'wb') as f:
+                t.save(f)
 
 
 class DottorrentGUI(Ui_MainWindow):
@@ -175,6 +180,7 @@ class DottorrentGUI(Ui_MainWindow):
         try:
             t_info = self.torrent.get_info()
         except Exception as e:
+            self.torrent = None
             errdlg = QtWidgets.QErrorMessage()
             errdlg.showMessage(str(e))
             errdlg.exec_()
@@ -250,7 +256,27 @@ class DottorrentGUI(Ui_MainWindow):
             self.creation_thread.start()
 
     def createTorrentBatch(self):
-        pass
+        save_dir = QtWidgets.QFileDialog.getExistingDirectory(
+            self.MainWindow, 'Select output directory')
+        if save_dir:
+            trackers = self.trackerEdit.toPlainText().strip().split()
+            web_seeds = self.webSeedEdit.toPlainText().strip().split()
+            self.creation_thread = CreateTorrentBatchQThread(
+                path=self.inputEdit.text(),
+                save_dir=save_dir,
+                trackers=trackers,
+                web_seeds=web_seeds,
+                private=_isChecked(self.privateTorrentCheckBox),
+                comment=self.commentEdit.text(),
+                include_md5=_isChecked(self.md5CheckBox)
+            )
+            self.creation_thread.started.connect(
+                self.creation_started)
+            self.creation_thread.progress_update.connect(
+                self._progress_update_batch)
+            self.creation_thread.finished.connect(
+                self.creation_finished)
+            self.creation_thread.start()
 
     def cancel_creation(self):
         self.creation_thread.requestInterruption()
@@ -261,7 +287,8 @@ class DottorrentGUI(Ui_MainWindow):
         self.updateProgress(msg, int(round(100 * pc / pt)))
 
     def _progress_update_batch(self, fn, tc, tt):
-        pass
+        msg = "({}/{}) {}".format(tc, tt, fn)
+        self.updateProgress(msg, int(round(100 * tc / tt)))
 
     def updateProgress(self, statusMsg, pv):
         self._statusBarMsg(statusMsg)
