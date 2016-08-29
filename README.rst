@@ -15,6 +15,7 @@ Features
 * Cross-platform
 * Full Unicode support
 * Import and export of tracker profiles
+* Batch torrent creation mode
 
 ------------
 Installation
