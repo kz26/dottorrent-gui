@@ -1,9 +1,9 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name="dottorrent-gui",
     version='1.0.0',
-    packages=['dottorrent_gui'],
+    packages=find_packages(),
     scripts=['dottorrent_gui/dottorrent_gui.py'],
 
     # Project uses reStructuredText, so ensure that the docutils get
