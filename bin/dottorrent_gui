@@ -9,9 +9,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import dottorrent
 import humanfriendly
 
-from ui_mainwindow import Ui_MainWindow
-from ui_about import Ui_AboutDialog
-from version import __version__
+from dottorrentGUI import Ui_MainWindow
+from dottorrentGUI import Ui_AboutDialog
+from dottorrentGUI import __version__
 
 
 PROGRAM_NAME = "dottorrent-gui {}".format(__version__)

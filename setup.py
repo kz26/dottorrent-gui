@@ -4,7 +4,7 @@ setup(
     name="dottorrent-gui",
     version='1.0.0',
     packages=find_packages(),
-    scripts=['bin/dottorrent_gui.py'],
+    scripts=['bin/dottorrent_gui'],
 
     # Project uses reStructuredText, so ensure that the docutils get
     # installed or upgraded on the target machine
