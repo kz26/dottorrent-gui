@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="dottorrent",
+    name="dottorrent-gui",
     version='1.0.0',
     packages=find_packages(),
     scripts=['dottorrent_gui/dottorrent_gui.py'],
