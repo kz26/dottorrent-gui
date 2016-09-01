@@ -14,15 +14,12 @@ from dottorrentGUI import Ui_AboutDialog
 from dottorrentGUI import __version__
 
 
-PROGRAM_NAME = "dottorrent-gui {}".format(__version__)
+PROGRAM_NAME = "dottorrent-gui"
+PROGRAM_NAME_VERSION = "{} {}".format(PROGRAM_NAME, __version__)
 CREATOR = "dottorrent-gui/{} dottorrent/{}".format(
     __version__, dottorrent.__version__)
 
 PIECE_SIZES = [2 ** i for i in range(14, 23)]
-
-
-def _isChecked(checkbox):
-    return checkbox.checkState() == QtCore.Qt.Checked
 
 
 class CreateTorrentQThread(QtCore.QThread):
@@ -91,7 +88,7 @@ class DottorrentGUI(Ui_MainWindow):
 
     def setupUi(self, MainWindow):
         super().setupUi(MainWindow)
-        MainWindow.setWindowTitle(PROGRAM_NAME)
+        MainWindow.setWindowTitle(PROGRAM_NAME_VERSION)
 
         self.torrent = None
         self.MainWindow = MainWindow
@@ -127,6 +124,33 @@ class DottorrentGUI(Ui_MainWindow):
         self.cancelButton.hide()
         self.cancelButton.clicked.connect(self.cancel_creation)
         self.resetButton.clicked.connect(lambda: self.setupUi(MainWindow))
+
+    def getSettings(self):
+        return QtCore.QSettings(
+            QtCore.QSettings.IniFormat,
+            QtCore.QSettings.UserScope,
+            PROGRAM_NAME,
+            PROGRAM_NAME
+        )
+
+    def loadSettings(self):
+        settings = self.getSettings()
+        trackers = settings.value('seeding/trackers')
+        if trackers:
+            self.trackerEdit.setPlainText(trackers)
+        web_seeds = settings.value('seeding/web_seeds')
+        if web_seeds:
+            self.webSeedEdit.setPlainText(web_seeds)
+        private = bool(int(settings.value('options/private') or 0))
+        self.privateTorrentCheckBox.setChecked(private)
+
+
+    def saveSettings(self):
+        settings = self.getSettings()
+        settings.setValue('seeding/trackers', self.trackerEdit.toPlainText())
+        settings.setValue('seeding/web_seeds', self.webSeedEdit.toPlainText())
+        settings.setValue('options/private',
+            int(self.privateTorrentCheckBox.isChecked()))
 
     def _statusBarMsg(self, msg):
         self.MainWindow.statusBar().showMessage(msg)
@@ -178,7 +202,7 @@ class DottorrentGUI(Ui_MainWindow):
     def initializeTorrent(self):
         self.torrent = dottorrent.Torrent(
             self.inputEdit.text(),
-            private=_isChecked(self.privateTorrentCheckBox),
+            private=self.privateTorrentCheckBox.isChecked(),
             comment=self.commentEdit.text())
         try:
             t_info = self.torrent.get_info()
@@ -236,7 +260,7 @@ class DottorrentGUI(Ui_MainWindow):
             errdlg.showMessage(str(e))
             errdlg.exec_()
             return
-        if _isChecked(self.batchModeCheckBox):
+        if self.batchModeCheckBox.isChecked():
             self.createTorrentBatch()
         else:
             self.createTorrent()
@@ -270,9 +294,9 @@ class DottorrentGUI(Ui_MainWindow):
                 save_dir=save_dir,
                 trackers=trackers,
                 web_seeds=web_seeds,
-                private=_isChecked(self.privateTorrentCheckBox),
+                private=self.privateTorrentCheckBox.isChecked(),
                 comment=self.commentEdit.text(),
-                include_md5=_isChecked(self.md5CheckBox)
+                include_md5=self.md5CheckBox.isChecked()
             )
             self.creation_thread.started.connect(
                 self.creation_started)
@@ -329,7 +353,7 @@ class DottorrentGUI(Ui_MainWindow):
         if fn:
             trackers = self.trackerEdit.toPlainText().strip().split()
             web_seeds = self.webSeedEdit.toPlainText().strip().split()
-            private = _isChecked(self.privateTorrentCheckBox)
+            private = self.privateTorrentCheckBox.isChecked()
             data = {
                 'trackers': trackers,
                 'web_seeds': web_seeds,
@@ -370,5 +394,7 @@ if __name__ == "__main__":
     MainWindow = QtWidgets.QMainWindow()
     ui = DottorrentGUI()
     ui.setupUi(MainWindow)
+    ui.loadSettings()
+    app.aboutToQuit.connect(lambda: ui.saveSettings())
     MainWindow.show()
     sys.exit(app.exec_())

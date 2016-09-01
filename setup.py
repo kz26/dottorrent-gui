@@ -1,8 +1,11 @@
 from setuptools import setup, find_packages
 
+with open('dottorrentGUI/version.py') as f:
+	exec(f.read())
+
 setup(
     name="dottorrent-gui",
-    version='1.0.0',
+    version=__version__,
     packages=find_packages(),
     scripts=['bin/dottorrent_gui'],
 
