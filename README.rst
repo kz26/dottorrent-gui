@@ -25,7 +25,7 @@ Installation
 Windows
 -------
 
-Binary releases of stable versions can be found at
+Binary releases of stable versions for 64-bit Windows can be found at
 `https://github.com/kz26/dottorrent-gui/releases <https://github.com/kz26/dottorrent-gui/releases>`_.
 Extract to a folder and run ``dottorrent_gui.exe``.
 
