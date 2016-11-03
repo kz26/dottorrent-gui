@@ -266,8 +266,11 @@ class DottorrentGUI(Ui_MainWindow):
             self.createTorrent()
 
     def createTorrent(self):
-        save_fn = os.path.splitext(
-            os.path.split(self.inputEdit.text())[1])[0] + '.torrent'
+        if os.path.isfile(self.inputEdit.text()):
+            save_fn = os.path.splitext(
+                os.path.split(self.inputEdit.text())[1])[0] + '.torrent'
+        else:
+            save_fn = self.inputEdit.text().split(os.sep)[-1] + '.torrent'
         fn = QtWidgets.QFileDialog.getSaveFileName(
             self.MainWindow, 'Save torrent', save_fn,
             filter=('Torrent file (*.torrent)'))[0]
