@@ -107,7 +107,7 @@ class DottorrentGUI(Ui_MainWindow):
 
         self.pieceCountLabel.hide()
         for x in PIECE_SIZES:
-            self.pieceSizeComboBox.addItem(humanfriendly.format_size(x))
+            self.pieceSizeComboBox.addItem(humanfriendly.format_size(x, binary=True))
 
         self.pieceSizeComboBox.currentIndexChanged.connect(
             self.pieceSizeChanged)
@@ -216,11 +216,11 @@ class DottorrentGUI(Ui_MainWindow):
         ptail = os.path.split(self.torrent.path)[1]
         if self.inputType == 'file':
             self._statusBarMsg(
-                "{}: {}".format(ptail, humanfriendly.format_size(t_info[0])))
+                "{}: {}".format(ptail, humanfriendly.format_size(t_info[0], binary=True)))
         else:
             self._statusBarMsg(
                 "{}: {} files, {}".format(
-                    ptail, t_info[1], humanfriendly.format_size(t_info[0])))
+                    ptail, t_info[1], humanfriendly.format_size(t_info[0], binary=True)))
         self.pieceSizeComboBox.setCurrentIndex(PIECE_SIZES.index(t_info[2]))
         self.updatePieceCountLabel(t_info[3])
         self.pieceCountLabel.show()

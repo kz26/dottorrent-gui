@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.1.1
+-----
+* Use humanfriendly.format_size() in binary mode
+* Update dependencies
+
 1.1.0
 -----
 * Restore last used values for trackers/web seeds and private flag
