@@ -49,7 +49,7 @@ class CreateTorrentBatchQThread(QtCore.QThread):
     progress_update = QtCore.pyqtSignal(str, int, int)
 
     def __init__(self, path, save_dir, trackers, web_seeds,
-                 private, comment, include_md5):
+                 private, comment, include_md5, source):
         super().__init__()
         self.path = path
         self.save_dir = save_dir
@@ -58,6 +58,7 @@ class CreateTorrentBatchQThread(QtCore.QThread):
         self.private = private
         self.comment = comment
         self.include_md5 = include_md5
+        self.source = source
 
     def run(self):
         def callback(*args):
@@ -76,7 +77,8 @@ class CreateTorrentBatchQThread(QtCore.QThread):
                 comment=self.comment,
                 include_md5=self.include_md5,
                 creation_date=datetime.now(),
-                created_by=CREATOR)
+                created_by=CREATOR,
+                source=self.source)
             self.success = t.generate(callback=callback)
             if self.isInterruptionRequested():
                 return
@@ -143,6 +145,9 @@ class DottorrentGUI(Ui_MainWindow):
             self.webSeedEdit.setPlainText(web_seeds)
         private = bool(int(settings.value('options/private') or 0))
         self.privateTorrentCheckBox.setChecked(private)
+        source = settings.value('options/source')
+        if source:
+            self.sourceEdit.setText(source)
 
 
     def saveSettings(self):
@@ -151,6 +156,7 @@ class DottorrentGUI(Ui_MainWindow):
         settings.setValue('seeding/web_seeds', self.webSeedEdit.toPlainText())
         settings.setValue('options/private',
             int(self.privateTorrentCheckBox.isChecked()))
+        settings.setValue('options/source', str(self.sourceEdit.text()))
 
     def _statusBarMsg(self, msg):
         self.MainWindow.statusBar().showMessage(msg)
@@ -203,7 +209,8 @@ class DottorrentGUI(Ui_MainWindow):
         self.torrent = dottorrent.Torrent(
             self.inputEdit.text(),
             private=self.privateTorrentCheckBox.isChecked(),
-            comment=self.commentEdit.text())
+            comment=self.commentEdit.text(),
+            source=self.sourceEdit.text())
         try:
             t_info = self.torrent.get_info()
         except Exception as e:
@@ -229,6 +236,10 @@ class DottorrentGUI(Ui_MainWindow):
     def commentEdited(self, comment):
         if getattr(self, 'torrent', None):
             self.torrent.comment = comment
+
+    def sourceEdited(self, source):
+        if getattr(self, 'torrent', None):
+            self.torrent.source = source
 
     def pieceSizeChanged(self, index):
         if getattr(self, 'torrent', None):
@@ -299,7 +310,8 @@ class DottorrentGUI(Ui_MainWindow):
                 web_seeds=web_seeds,
                 private=self.privateTorrentCheckBox.isChecked(),
                 comment=self.commentEdit.text(),
-                include_md5=self.md5CheckBox.isChecked()
+                include_md5=self.md5CheckBox.isChecked(),
+                source=self.sourceEdit.text()
             )
             self.creation_thread.started.connect(
                 self.creation_started)
@@ -357,10 +369,12 @@ class DottorrentGUI(Ui_MainWindow):
             trackers = self.trackerEdit.toPlainText().strip().split()
             web_seeds = self.webSeedEdit.toPlainText().strip().split()
             private = self.privateTorrentCheckBox.isChecked()
+            source = str(self.sourceEdit.text())
             data = {
                 'trackers': trackers,
                 'web_seeds': web_seeds,
-                'private': private
+                'private': private,
+                'source': source
             }
             with open(fn, 'w') as f:
                 json.dump(data, f, indent=4, sort_keys=True)
@@ -376,12 +390,14 @@ class DottorrentGUI(Ui_MainWindow):
             trackers = data.get('trackers', [])
             web_seeds = data.get('web_seeds', [])
             private = data.get('private', False)
+            source = data.get('source', [])
             try:
                 ts = os.linesep.join(trackers)
                 self.trackerEdit.setPlainText(ts)
                 ws = os.linesep.join(web_seeds)
                 self.webSeedEdit.setPlainText(ws)
                 self.privateTorrentCheckBox.setChecked(private)
+                self.sourceEdit.setText(source)
             except Exception as e:
                 errdlg = QtWidgets.QErrorMessage()
                 errdlg.setWindowTitle('Error')

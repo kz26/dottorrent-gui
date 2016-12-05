@@ -117,7 +117,7 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="0" colspan="2">
+       <item row="9" column="0" colspan="2">
         <widget class="QCheckBox" name="md5CheckBox">
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is not used by BitTorrent at all, but it is included by some programs for greater compatibility.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -134,7 +134,7 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="0" colspan="2">
+       <item row="8" column="0" colspan="2">
         <widget class="QCheckBox" name="privateTorrentCheckBox">
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, clients will not use DHT or Peer Exchange to discover peers or transfer data. Make sure to enable this option for private trackers.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -153,6 +153,16 @@
        </item>
        <item row="5" column="0" colspan="2">
         <widget class="QLineEdit" name="commentEdit"/>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="sourceLabel">
+         <property name="text">
+          <string>Source</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="2">
+        <widget class="QLineEdit" name="sourceEdit"/>
        </item>
       </layout>
      </widget>
