@@ -145,6 +145,9 @@ class DottorrentGUI(Ui_MainWindow):
             self.webSeedEdit.setPlainText(web_seeds)
         private = bool(int(settings.value('options/private') or 0))
         self.privateTorrentCheckBox.setChecked(private)
+        source = settings.value('options/source')
+        if source:
+            self.sourceEdit.setText(source)
 
 
     def saveSettings(self):
@@ -153,6 +156,7 @@ class DottorrentGUI(Ui_MainWindow):
         settings.setValue('seeding/web_seeds', self.webSeedEdit.toPlainText())
         settings.setValue('options/private',
             int(self.privateTorrentCheckBox.isChecked()))
+        settings.setValue('options/source', str(self.sourceEdit.text()))
 
     def _statusBarMsg(self, msg):
         self.MainWindow.statusBar().showMessage(msg)
@@ -365,10 +369,12 @@ class DottorrentGUI(Ui_MainWindow):
             trackers = self.trackerEdit.toPlainText().strip().split()
             web_seeds = self.webSeedEdit.toPlainText().strip().split()
             private = self.privateTorrentCheckBox.isChecked()
+            source = str(self.sourceEdit.text())
             data = {
                 'trackers': trackers,
                 'web_seeds': web_seeds,
-                'private': private
+                'private': private,
+                'source': source
             }
             with open(fn, 'w') as f:
                 json.dump(data, f, indent=4, sort_keys=True)
@@ -384,12 +390,14 @@ class DottorrentGUI(Ui_MainWindow):
             trackers = data.get('trackers', [])
             web_seeds = data.get('web_seeds', [])
             private = data.get('private', False)
+            source = data.get('source', [])
             try:
                 ts = os.linesep.join(trackers)
                 self.trackerEdit.setPlainText(ts)
                 ws = os.linesep.join(web_seeds)
                 self.webSeedEdit.setPlainText(ws)
                 self.privateTorrentCheckBox.setChecked(private)
+                self.sourceEdit.setText(source)
             except Exception as e:
                 errdlg = QtWidgets.QErrorMessage()
                 errdlg.setWindowTitle('Error')
