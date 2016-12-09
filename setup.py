@@ -7,11 +7,15 @@ setup(
     name="dottorrent-gui",
     version=__version__,
     packages=find_packages(),
-    scripts=['bin/dottorrent_gui'],
+    entry_points={
+        'gui_scripts': [
+            'dottorrent-gui = dottorrentGUI.gui:main'
+        ]
+    },
 
     # Project uses reStructuredText, so ensure that the docutils get
     # installed or upgraded on the target machine
-    install_requires=['dottorrent>=1.5.3', 'PyQt5>=5.7'],
+    install_requires=['dottorrent>=1.6.0', 'PyQt5>=5.7'],
 
     # metadata for upload to PyPI
     author="Kevin Zhang",

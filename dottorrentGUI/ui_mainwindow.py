@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(496, 743)
+        MainWindow.resize(496, 1007)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -106,7 +106,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addLayout(self.horizontalLayout)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 496, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 496, 36))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -156,6 +156,7 @@ class Ui_MainWindow(object):
         self.privateTorrentCheckBox.setText(_translate("MainWindow", "Private torrent"))
         self.commentLabel.setText(_translate("MainWindow", "Comment"))
         self.sourceLabel.setText(_translate("MainWindow", "Source"))
+        self.sourceEdit.setToolTip(_translate("MainWindow", "<html><head/><body><p>An optional source string that wil be added to the info dictionary. Useful for creating torrents with unique info hashes for private trackers.</p></body></html>"))
         self.createButton.setText(_translate("MainWindow", "Create..."))
         self.cancelButton.setText(_translate("MainWindow", "Cancel"))
         self.resetButton.setText(_translate("MainWindow", "Reset"))

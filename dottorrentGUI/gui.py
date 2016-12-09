@@ -49,16 +49,16 @@ class CreateTorrentBatchQThread(QtCore.QThread):
     progress_update = QtCore.pyqtSignal(str, int, int)
 
     def __init__(self, path, save_dir, trackers, web_seeds,
-                 private, comment, include_md5, source):
+                 private, source, comment, include_md5):
         super().__init__()
         self.path = path
         self.save_dir = save_dir
         self.trackers = trackers
         self.web_seeds = web_seeds
         self.private = private
+        self.source = source
         self.comment = comment
         self.include_md5 = include_md5
-        self.source = source
 
     def run(self):
         def callback(*args):
@@ -74,11 +74,12 @@ class CreateTorrentBatchQThread(QtCore.QThread):
                 trackers=self.trackers,
                 web_seeds=self.web_seeds,
                 private=self.private,
+                source=self.source,
                 comment=self.comment,
                 include_md5=self.include_md5,
                 creation_date=datetime.now(),
-                created_by=CREATOR,
-                source=self.source)
+                created_by=CREATOR
+            )
             self.success = t.generate(callback=callback)
             if self.isInterruptionRequested():
                 return
@@ -109,13 +110,20 @@ class DottorrentGUI(Ui_MainWindow):
 
         self.pieceCountLabel.hide()
         for x in PIECE_SIZES:
-            self.pieceSizeComboBox.addItem(humanfriendly.format_size(x, binary=True))
+            self.pieceSizeComboBox.addItem(
+                humanfriendly.format_size(x, binary=True))
 
         self.pieceSizeComboBox.currentIndexChanged.connect(
             self.pieceSizeChanged)
 
         self.privateTorrentCheckBox.stateChanged.connect(
             self.privateTorrentChanged)
+
+        self.commentEdit.textEdited.connect(
+            self.commentEdited)
+
+        self.sourceEdit.textEdited.connect(
+            self.sourceEdited)
 
         self.md5CheckBox.stateChanged.connect(
             self.md5Changed)
@@ -149,14 +157,13 @@ class DottorrentGUI(Ui_MainWindow):
         if source:
             self.sourceEdit.setText(source)
 
-
     def saveSettings(self):
         settings = self.getSettings()
         settings.setValue('seeding/trackers', self.trackerEdit.toPlainText())
         settings.setValue('seeding/web_seeds', self.webSeedEdit.toPlainText())
         settings.setValue('options/private',
-            int(self.privateTorrentCheckBox.isChecked()))
-        settings.setValue('options/source', str(self.sourceEdit.text()))
+                          int(self.privateTorrentCheckBox.isChecked()))
+        settings.setValue('options/source', self.sourceEdit.text())
 
     def _statusBarMsg(self, msg):
         self.MainWindow.statusBar().showMessage(msg)
@@ -223,11 +230,13 @@ class DottorrentGUI(Ui_MainWindow):
         ptail = os.path.split(self.torrent.path)[1]
         if self.inputType == 'file':
             self._statusBarMsg(
-                "{}: {}".format(ptail, humanfriendly.format_size(t_info[0], binary=True)))
+                "{}: {}".format(ptail, humanfriendly.format_size(
+                    t_info[0], binary=True)))
         else:
             self._statusBarMsg(
                 "{}: {} files, {}".format(
-                    ptail, t_info[1], humanfriendly.format_size(t_info[0], binary=True)))
+                    ptail, t_info[1], humanfriendly.format_size(
+                        t_info[0], binary=True)))
         self.pieceSizeComboBox.setCurrentIndex(PIECE_SIZES.index(t_info[2]))
         self.updatePieceCountLabel(t_info[3])
         self.pieceCountLabel.show()
@@ -309,9 +318,9 @@ class DottorrentGUI(Ui_MainWindow):
                 trackers=trackers,
                 web_seeds=web_seeds,
                 private=self.privateTorrentCheckBox.isChecked(),
+                source=self.sourceEdit.text(),
                 comment=self.commentEdit.text(),
                 include_md5=self.md5CheckBox.isChecked(),
-                source=self.sourceEdit.text()
             )
             self.creation_thread.started.connect(
                 self.creation_started)
@@ -369,7 +378,7 @@ class DottorrentGUI(Ui_MainWindow):
             trackers = self.trackerEdit.toPlainText().strip().split()
             web_seeds = self.webSeedEdit.toPlainText().strip().split()
             private = self.privateTorrentCheckBox.isChecked()
-            source = str(self.sourceEdit.text())
+            source = self.sourceEdit.text()
             data = {
                 'trackers': trackers,
                 'web_seeds': web_seeds,
@@ -408,7 +417,7 @@ class DottorrentGUI(Ui_MainWindow):
                 os.path.split(fn)[1]))
 
 
-if __name__ == "__main__":
+def main():
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = DottorrentGUI()
@@ -417,3 +426,7 @@ if __name__ == "__main__":
     app.aboutToQuit.connect(lambda: ui.saveSettings())
     MainWindow.show()
     sys.exit(app.exec_())
+
+
+if __name__ == "__main__":
+    main()

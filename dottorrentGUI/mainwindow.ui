@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>496</width>
-    <height>743</height>
+    <height>1007</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -162,7 +162,11 @@
         </widget>
        </item>
        <item row="7" column="0" colspan="2">
-        <widget class="QLineEdit" name="sourceEdit"/>
+        <widget class="QLineEdit" name="sourceEdit">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;An optional source string that wil be added to the info dictionary. Useful for creating torrents with unique info hashes for private trackers.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -207,7 +211,7 @@
      <x>0</x>
      <y>0</y>
      <width>496</width>
-     <height>21</height>
+     <height>36</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
