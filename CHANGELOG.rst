@@ -3,9 +3,13 @@ Changelog
 
 1.2.0
 -----
+* Add optinal source string field
+* Add "Auto" piece size option
+* Save most recently used input and output directories
 * Fix crash when encountering empty subdirectories in batch mode
 * Improve error handling during torrent creation
-* Add "Auto" piece size option
+* Add F1 shortcut for About window
+
 
 1.1.3
 -----

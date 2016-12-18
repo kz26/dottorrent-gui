@@ -27,7 +27,6 @@ class CreateTorrentQThread(QtCore.QThread):
     progress_update = QtCore.pyqtSignal(str, int, int)
     onError = QtCore.pyqtSignal(str)
 
-
     def __init__(self, torrent, save_path):
         super().__init__()
         self.torrent = torrent
@@ -173,6 +172,9 @@ class DottorrentGUI(Ui_MainWindow):
         source = settings.value('options/source')
         if source:
             self.sourceEdit.setText(source)
+        self.last_input_dir = settings.value('history/last_input_dir') or None
+        self.last_output_dir = settings.value(
+            'history/last_output_dir') or None
 
     def saveSettings(self):
         settings = self.getSettings()
@@ -181,6 +183,10 @@ class DottorrentGUI(Ui_MainWindow):
         settings.setValue('options/private',
                           int(self.privateTorrentCheckBox.isChecked()))
         settings.setValue('options/source', self.sourceEdit.text())
+        if self.last_input_dir:
+            settings.setValue('history/last_input_dir', self.last_input_dir)
+        if self.last_output_dir:
+            settings.setValue('history/last_output_dir', self.last_output_dir)
 
     def _statusBarMsg(self, msg):
         self.MainWindow.statusBar().showMessage(msg)
@@ -213,17 +219,20 @@ class DottorrentGUI(Ui_MainWindow):
         self.inputEdit.setText('')
 
     def browseInput(self):
+        qfd = QtWidgets.QFileDialog(self.MainWindow)
+        if self.last_input_dir:
+            qfd.setDirectory(self.last_input_dir)
         if self.inputType == 'file':
-            fn = QtWidgets.QFileDialog.getOpenFileName(
-                self.MainWindow, 'Select file')[0]
-            if fn:
-                self.inputEdit.setText(fn)
+            qfd.setWindowTitle('Select file')
+            qfd.setFileMode(QtWidgets.QFileDialog.ExistingFile)
         else:
-            dn = QtWidgets.QFileDialog.getExistingDirectory(
-                self.MainWindow, 'Select directory')
-            if dn:
-                self.inputEdit.setText(dn)
-        self.initializeTorrent()
+            qfd.setWindowTitle('Select directory')
+            qfd.setFileMode(QtWidgets.QFileDialog.Directory)
+        if qfd.exec_():
+            fn = qfd.selectedFiles()[0]
+            self.inputEdit.setText(fn)
+            self.last_input_dir = os.path.split(fn)[0]
+            self.initializeTorrent()
 
     def batchModeChanged(self, state):
         if state == QtCore.Qt.Checked:
@@ -308,10 +317,13 @@ class DottorrentGUI(Ui_MainWindow):
                 os.path.split(self.inputEdit.text())[1])[0] + '.torrent'
         else:
             save_fn = self.inputEdit.text().split(os.sep)[-1] + '.torrent'
+        if self.last_output_dir:
+            save_fn = os.path.join(self.last_output_dir, save_fn)
         fn = QtWidgets.QFileDialog.getSaveFileName(
             self.MainWindow, 'Save torrent', save_fn,
             filter=('Torrent file (*.torrent)'))[0]
         if fn:
+            self.last_output_dir = os.path.split(fn)[0]
             self.creation_thread = CreateTorrentQThread(
                 self.torrent,
                 fn)
@@ -327,8 +339,9 @@ class DottorrentGUI(Ui_MainWindow):
 
     def createTorrentBatch(self):
         save_dir = QtWidgets.QFileDialog.getExistingDirectory(
-            self.MainWindow, 'Select output directory')
+            self.MainWindow, 'Select output directory', self.last_output_dir)
         if save_dir:
+            self.last_output_dir = save_dir
             trackers = self.trackerEdit.toPlainText().strip().split()
             web_seeds = self.webSeedEdit.toPlainText().strip().split()
             self.creation_thread = CreateTorrentBatchQThread(
@@ -393,7 +406,7 @@ class DottorrentGUI(Ui_MainWindow):
     def export_trackers(self):
 
         fn = QtWidgets.QFileDialog.getSaveFileName(
-            self.MainWindow, 'Save tracker profile', None,
+            self.MainWindow, 'Save tracker profile', self.last_output_dir,
             filter=('JSON configuration file (*.json)'))[0]
         if fn:
             trackers = self.trackerEdit.toPlainText().strip().split()
@@ -412,7 +425,7 @@ class DottorrentGUI(Ui_MainWindow):
 
     def import_trackers(self):
         fn = QtWidgets.QFileDialog.getOpenFileName(
-            self.MainWindow, 'Open tracker profile',
+            self.MainWindow, 'Open tracker profile', self.last_input_dir,
             filter=('JSON configuration file (*.json)'))[0]
         if fn:
             with open(fn) as f:

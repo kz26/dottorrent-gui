@@ -106,7 +106,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addLayout(self.horizontalLayout)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 496, 36))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 496, 27))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -167,16 +167,7 @@ class Ui_MainWindow(object):
         self.actionExportTrackers.setText(_translate("MainWindow", "Export trackers..."))
         self.actionExportTrackers.setShortcut(_translate("MainWindow", "Ctrl+S"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
+        self.actionAbout.setShortcut(_translate("MainWindow", "F1"))
         self.actionQuit.setText(_translate("MainWindow", "Quit"))
         self.actionQuit.setShortcut(_translate("MainWindow", "Ctrl+Q"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
 
