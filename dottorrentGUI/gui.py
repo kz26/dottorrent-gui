@@ -244,11 +244,7 @@ class DottorrentGUI(Ui_MainWindow):
             self.pieceCountLabel.show()
 
     def initializeTorrent(self):
-        self.torrent = dottorrent.Torrent(
-            self.inputEdit.text(),
-            private=self.privateTorrentCheckBox.isChecked(),
-            comment=self.commentEdit.text(),
-            source=self.sourceEdit.text())
+        self.torrent = dottorrent.Torrent(self.inputEdit.text())
         try:
             t_info = self.torrent.get_info()
         except Exception as e:
@@ -306,6 +302,10 @@ class DottorrentGUI(Ui_MainWindow):
         except Exception as e:
             self._showError(str(e))
             return
+        self.torrent.private = self.privateTorrentCheckBox.isChecked()
+        self.torrent.comment = self.commentEdit.text() or None
+        self.torrent.source = self.sourceEdit.text() or None
+        self.torrent.include_md5 = self.md5CheckBox.isChecked()
         if self.batchModeCheckBox.isChecked():
             self.createTorrentBatch()
         else:

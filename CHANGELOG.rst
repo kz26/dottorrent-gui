@@ -9,6 +9,7 @@ Changelog
 * Fix crash when encountering empty subdirectories in batch mode
 * Improve error handling during torrent creation
 * Add F1 shortcut for About window
+* Minor bugfixes
 
 
 1.1.3
