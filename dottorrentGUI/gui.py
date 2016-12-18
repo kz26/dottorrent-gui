@@ -19,12 +19,14 @@ PROGRAM_NAME_VERSION = "{} {}".format(PROGRAM_NAME, __version__)
 CREATOR = "dottorrent-gui/{} dottorrent/{}".format(
     __version__, dottorrent.__version__)
 
-PIECE_SIZES = [2 ** i for i in range(14, 23)]
+PIECE_SIZES = [None] + [2 ** i for i in range(14, 23)]
 
 
 class CreateTorrentQThread(QtCore.QThread):
 
     progress_update = QtCore.pyqtSignal(str, int, int)
+    onError = QtCore.pyqtSignal(str)
+
 
     def __init__(self, torrent, save_path):
         super().__init__()
@@ -38,7 +40,11 @@ class CreateTorrentQThread(QtCore.QThread):
 
         self.torrent.creation_date = datetime.now()
         self.torrent.created_by = CREATOR
-        self.success = self.torrent.generate(callback=progress_callback)
+        try:
+            self.success = self.torrent.generate(callback=progress_callback)
+        except Exception as exc:
+            self.onError.emit(str(exc))
+            return
         if self.success:
             with open(self.save_path, 'wb') as f:
                 self.torrent.save(f)
@@ -47,6 +53,7 @@ class CreateTorrentQThread(QtCore.QThread):
 class CreateTorrentBatchQThread(QtCore.QThread):
 
     progress_update = QtCore.pyqtSignal(str, int, int)
+    onError = QtCore.pyqtSignal(str)
 
     def __init__(self, path, save_dir, trackers, web_seeds,
                  private, source, comment, include_md5):
@@ -67,24 +74,33 @@ class CreateTorrentBatchQThread(QtCore.QThread):
         entries = os.listdir(self.path)
         for i, p in enumerate(entries):
             p = os.path.join(self.path, p)
-            sfn = os.path.split(p)[1] + '.torrent'
-            self.progress_update.emit(sfn, i, len(entries))
-            t = dottorrent.Torrent(
-                p,
-                trackers=self.trackers,
-                web_seeds=self.web_seeds,
-                private=self.private,
-                source=self.source,
-                comment=self.comment,
-                include_md5=self.include_md5,
-                creation_date=datetime.now(),
-                created_by=CREATOR
-            )
-            self.success = t.generate(callback=callback)
-            if self.isInterruptionRequested():
-                return
-            with open(os.path.join(self.save_dir, sfn), 'wb') as f:
-                t.save(f)
+            if not dottorrent.is_hidden_file(p):
+                sfn = os.path.split(p)[1] + '.torrent'
+                self.progress_update.emit(sfn, i, len(entries))
+                t = dottorrent.Torrent(
+                    p,
+                    trackers=self.trackers,
+                    web_seeds=self.web_seeds,
+                    private=self.private,
+                    source=self.source,
+                    comment=self.comment,
+                    include_md5=self.include_md5,
+                    creation_date=datetime.now(),
+                    created_by=CREATOR
+                )
+                try:
+                    self.success = t.generate(callback=callback)
+                # ignore empty inputs
+                except dottorrent.exceptions.EmptyInputException:
+                    continue
+                except Exception as exc:
+                    self.onError.emit(str(exc))
+                    return
+                if self.isInterruptionRequested():
+                    return
+                if self.success:
+                    with open(os.path.join(self.save_dir, sfn), 'wb') as f:
+                        t.save(f)
 
 
 class DottorrentGUI(Ui_MainWindow):
@@ -109,7 +125,8 @@ class DottorrentGUI(Ui_MainWindow):
         self.batchModeCheckBox.stateChanged.connect(self.batchModeChanged)
 
         self.pieceCountLabel.hide()
-        for x in PIECE_SIZES:
+        self.pieceSizeComboBox.addItem('Auto')
+        for x in PIECE_SIZES[1:]:
             self.pieceSizeComboBox.addItem(
                 humanfriendly.format_size(x, binary=True))
 
@@ -168,6 +185,12 @@ class DottorrentGUI(Ui_MainWindow):
     def _statusBarMsg(self, msg):
         self.MainWindow.statusBar().showMessage(msg)
 
+    def _showError(self, msg):
+        errdlg = QtWidgets.QErrorMessage()
+        errdlg.setWindowTitle('Error')
+        errdlg.showMessage(msg)
+        errdlg.exec_()
+
     def showAboutDialog(self):
         qdlg = QtWidgets.QDialog()
         ad = Ui_AboutDialog()
@@ -204,12 +227,11 @@ class DottorrentGUI(Ui_MainWindow):
 
     def batchModeChanged(self, state):
         if state == QtCore.Qt.Checked:
-            self.pieceSizeLabel.hide()
-            self.pieceSizeComboBox.hide()
+            self.pieceSizeComboBox.setCurrentIndex(0)
+            self.pieceSizeComboBox.setEnabled(False)
             self.pieceCountLabel.hide()
         else:
-            self.pieceSizeLabel.show()
-            self.pieceSizeComboBox.show()
+            self.pieceSizeComboBox.setEnabled(True)
             self.pieceCountLabel.show()
 
     def initializeTorrent(self):
@@ -222,10 +244,7 @@ class DottorrentGUI(Ui_MainWindow):
             t_info = self.torrent.get_info()
         except Exception as e:
             self.torrent = None
-            errdlg = QtWidgets.QErrorMessage()
-            errdlg.setWindowTitle('Error')
-            errdlg.showMessage(str(e))
-            errdlg.exec_()
+            self._showError(str(e))
             return
         ptail = os.path.split(self.torrent.path)[1]
         if self.inputType == 'file':
@@ -237,8 +256,8 @@ class DottorrentGUI(Ui_MainWindow):
                 "{}: {} files, {}".format(
                     ptail, t_info[1], humanfriendly.format_size(
                         t_info[0], binary=True)))
-        self.pieceSizeComboBox.setCurrentIndex(PIECE_SIZES.index(t_info[2]))
-        self.updatePieceCountLabel(t_info[3])
+        self.pieceSizeComboBox.setCurrentIndex(0)
+        self.updatePieceCountLabel(t_info[2], t_info[3])
         self.pieceCountLabel.show()
         self.createButton.setEnabled(True)
 
@@ -254,10 +273,11 @@ class DottorrentGUI(Ui_MainWindow):
         if getattr(self, 'torrent', None):
             self.torrent.piece_size = PIECE_SIZES[index]
             t_info = self.torrent.get_info()
-            self.updatePieceCountLabel(t_info[3])
+            self.updatePieceCountLabel(t_info[2], t_info[3])
 
-    def updatePieceCountLabel(self, pc):
-        self.pieceCountLabel.setText("{} pieces".format(pc))
+    def updatePieceCountLabel(self, ps, pc):
+        ps = humanfriendly.format_size(ps, binary=True)
+        self.pieceCountLabel.setText("{} pieces @ {} each".format(pc, ps))
 
     def privateTorrentChanged(self, state):
         if getattr(self, 'torrent', None):
@@ -275,10 +295,7 @@ class DottorrentGUI(Ui_MainWindow):
             self.torrent.trackers = trackers
             self.torrent.web_seeds = web_seeds
         except Exception as e:
-            errdlg = QtWidgets.QErrorMessage()
-            errdlg.setWindowTitle('Error')
-            errdlg.showMessage(str(e))
-            errdlg.exec_()
+            self._showError(str(e))
             return
         if self.batchModeCheckBox.isChecked():
             self.createTorrentBatch()
@@ -304,6 +321,8 @@ class DottorrentGUI(Ui_MainWindow):
                 self._progress_update)
             self.creation_thread.finished.connect(
                 self.creation_finished)
+            self.creation_thread.onError.connect(
+                self._showError)
             self.creation_thread.start()
 
     def createTorrentBatch(self):
@@ -328,6 +347,8 @@ class DottorrentGUI(Ui_MainWindow):
                 self._progress_update_batch)
             self.creation_thread.finished.connect(
                 self.creation_finished)
+            self.creation_thread.onError.connect(
+                self._showError)
             self.creation_thread.start()
 
     def cancel_creation(self):
@@ -408,10 +429,7 @@ class DottorrentGUI(Ui_MainWindow):
                 self.privateTorrentCheckBox.setChecked(private)
                 self.sourceEdit.setText(source)
             except Exception as e:
-                errdlg = QtWidgets.QErrorMessage()
-                errdlg.setWindowTitle('Error')
-                errdlg.showMessage(str(e))
-                errdlg.exec_()
+                self._showError(str(e))
                 return
             self._statusBarMsg("Tracker profile {} loaded".format(
                 os.path.split(fn)[1]))
