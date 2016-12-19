@@ -45,7 +45,7 @@ Latest stable release: ``pip install dottorrent-gui``
 
 Development: ``git clone`` this repository, then ``pip install .``
 
-To run: ``dottorrent_gui``
+To run: ``dottorrent-gui``
 
 -------
 License
