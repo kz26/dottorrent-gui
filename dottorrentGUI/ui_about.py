@@ -12,12 +12,13 @@ class Ui_AboutDialog(object):
     def setupUi(self, AboutDialog):
         AboutDialog.setObjectName("AboutDialog")
         AboutDialog.setWindowModality(QtCore.Qt.WindowModal)
-        AboutDialog.resize(567, 356)
+        AboutDialog.resize(567, 253)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(AboutDialog.sizePolicy().hasHeightForWidth())
         AboutDialog.setSizePolicy(sizePolicy)
+        AboutDialog.setMinimumSize(QtCore.QSize(567, 253))
         self.verticalLayout = QtWidgets.QVBoxLayout(AboutDialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.programNameLabel = QtWidgets.QLabel(AboutDialog)
@@ -67,14 +68,4 @@ class Ui_AboutDialog(object):
         self.programVersionLabel.setText(_translate("AboutDialog", "PROGRAM_VERSION"))
         self.dtVersionLabel.setText(_translate("AboutDialog", "DOTTORRENT_VERSION"))
         self.infoLabel.setText(_translate("AboutDialog", "<html><head/><body><p><span style=\" font-size:10pt;\">© 2016 Kevin Zhang</span></p><p><span style=\" font-size:10pt;\">dottorrent-gui is made available under the terms of the </span><a href=\"http://choosealicense.com/licenses/gpl-3.0/\"><span style=\" font-size:10pt; text-decoration: underline; color:#0000ff;\">GNU General Public License, version 3</span></a><span style=\" font-size:10pt;\">.</span></p><p><a href=\"https://github.com/kz26/dottorrent-gui\"><span style=\" font-size:10pt; text-decoration: underline; color:#0000ff;\">https://github.com/kz26/dottorrent-gui</span></a></p></body></html>"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    AboutDialog = QtWidgets.QDialog()
-    ui = Ui_AboutDialog()
-    ui.setupUi(AboutDialog)
-    AboutDialog.show()
-    sys.exit(app.exec_())
 

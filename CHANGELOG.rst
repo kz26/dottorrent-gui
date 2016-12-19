@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.2.1
+-----
+* [CHANGE] Update file menu item text 
+* [FIX] error when importing source string from tracker configuration file
+* [FIX] Tweak default window sizing
+
 1.2.0
 -----
 * Add optinal source string field

@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(496, 1007)
+        MainWindow.resize(496, 768)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -46,12 +46,14 @@ class Ui_MainWindow(object):
         self.trackerLabel.setObjectName("trackerLabel")
         self.verticalLayout_2.addWidget(self.trackerLabel)
         self.trackerEdit = QtWidgets.QPlainTextEdit(self.seedingGroupBox)
+        self.trackerEdit.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
         self.trackerEdit.setObjectName("trackerEdit")
         self.verticalLayout_2.addWidget(self.trackerEdit)
         self.webSeedLabel = QtWidgets.QLabel(self.seedingGroupBox)
         self.webSeedLabel.setObjectName("webSeedLabel")
         self.verticalLayout_2.addWidget(self.webSeedLabel)
         self.webSeedEdit = QtWidgets.QPlainTextEdit(self.seedingGroupBox)
+        self.webSeedEdit.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
         self.webSeedEdit.setObjectName("webSeedEdit")
         self.verticalLayout_2.addWidget(self.webSeedEdit)
         self.verticalLayout.addWidget(self.seedingGroupBox)

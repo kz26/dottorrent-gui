@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>567</width>
-    <height>356</height>
+    <height>253</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,6 +18,12 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>567</width>
+    <height>253</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>About</string>

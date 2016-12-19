@@ -433,7 +433,7 @@ class DottorrentGUI(Ui_MainWindow):
             trackers = data.get('trackers', [])
             web_seeds = data.get('web_seeds', [])
             private = data.get('private', False)
-            source = data.get('source', [])
+            source = data.get('source', '')
             try:
                 ts = os.linesep.join(trackers)
                 self.trackerEdit.setPlainText(ts)
