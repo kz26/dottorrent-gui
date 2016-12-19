@@ -15,12 +15,12 @@ Features
 * Cross-platform
 * Full Unicode support
 * Automatic and manual piece size selection
-* Import and export of tracker profiles
 * Batch torrent creation mode
 * HTTP/web seeds support `(BEP 19) <http://www.bittorrent.org/beps/bep_0019.html>`_
 * Private flag support `(BEP 27) <http://www.bittorrent.org/beps/bep_0027.html>`_
 * User-definable source string
 * Optional MD5 file hash inclusion
+* Import and export of tracker profiles (trackers, web seeds, source string)
 
 ------------
 Installation
