@@ -14,9 +14,13 @@ Features
 * Fast (capable of several hundred MB/s)
 * Cross-platform
 * Full Unicode support
-* Automatic piece size selection
+* Automatic and manual piece size selection
 * Import and export of tracker profiles
 * Batch torrent creation mode
+* HTTP/web seeds support `(BEP 19) <http://www.bittorrent.org/beps/bep_0019.html>`_
+* Private flag support `(BEP 27) <http://www.bittorrent.org/beps/bep_0027.html>`_
+* User-definable source string
+* Optional MD5 file hash inclusion
 
 ------------
 Installation
