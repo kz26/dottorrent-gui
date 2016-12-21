@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.2.2
+-----
+* [FIX] window resizing behavior
+
 1.2.1
 -----
 * [CHANGE] Update file menu item text 
