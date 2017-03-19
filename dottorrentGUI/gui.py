@@ -255,18 +255,19 @@ class DottorrentGUI(Ui_MainWindow):
 
     def injectInputPath(self, path):
         path = path.strip()
-        if os.path.isfile(path):
-            self.inputType = 'file'
-            self.batchModeCheckBox.setCheckState(QtCore.Qt.Unchecked)
-            self.batchModeCheckBox.setEnabled(False)
-            self.batchModeCheckBox.hide()
-        else:
-            self.inputType = 'directory'
-            self.batchModeCheckBox.setEnabled(True)
-            self.batchModeCheckBox.show()
-        self.inputEdit.setText(path)
-        self.last_input_dir = os.path.split(path)[0]
-        self.initializeTorrent()
+        if os.path.exists(path):
+            if os.path.isfile(path):
+                self.inputType = 'file'
+                self.batchModeCheckBox.setCheckState(QtCore.Qt.Unchecked)
+                self.batchModeCheckBox.setEnabled(False)
+                self.batchModeCheckBox.hide()
+            else:
+                self.inputType = 'directory'
+                self.batchModeCheckBox.setEnabled(True)
+                self.batchModeCheckBox.show()
+            self.inputEdit.setText(path)
+            self.last_input_dir = os.path.split(path)[0]
+            self.initializeTorrent()
 
     def inputDragEnterEvent(self, event):
         if event.mimeData().hasUrls():
