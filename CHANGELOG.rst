@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.3.1
+-----
+[FIX] Add "one per line" notation to filename exclusion patterns label
+
 1.3.0
 -----
 * [NEW] Remember file/directory/batch mode settings for next startup (issue #5)

@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(496, 1095)
+        MainWindow.resize(496, 1131)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -234,7 +234,7 @@ class Ui_MainWindow(object):
         self.batchModeCheckBox.setToolTip(_translate("MainWindow", "<html><head/><body><p>If enabled, a torrent will be created for each directory and file one level below the input directory. The piece size for each torrent will be determined automatically.</p></body></html>"))
         self.batchModeCheckBox.setText(_translate("MainWindow", "Batch mode"))
         self.directoryRadioButton.setText(_translate("MainWindow", "Directory"))
-        self.excludeLabel.setText(_translate("MainWindow", "Filename exclusion patterns"))
+        self.excludeLabel.setText(_translate("MainWindow", "Filename exclusion patterns (one per line)"))
         self.browseButton.setText(_translate("MainWindow", "Browse..."))
         self.pasteButton.setText(_translate("MainWindow", "Paste from clipboard"))
         self.seedingGroupBox.setTitle(_translate("MainWindow", "Seeding"))

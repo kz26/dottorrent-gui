@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>496</width>
-    <height>1095</height>
+    <height>1131</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -78,7 +78,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Filename exclusion patterns</string>
+          <string>Filename exclusion patterns (one per line)</string>
          </property>
         </widget>
        </item>
