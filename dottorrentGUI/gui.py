@@ -125,6 +125,7 @@ class DottorrentGUI(Ui_MainWindow):
 
         self.inputEdit.dragEnterEvent = self.inputDragEnterEvent
         self.inputEdit.dropEvent = self.inputDropEvent
+        self.pasteButton.clicked.connect(self.pasteInput)
 
         self.pieceCountLabel.hide()
         self.pieceSizeComboBox.addItem('Auto')
@@ -164,6 +165,12 @@ class DottorrentGUI(Ui_MainWindow):
 
     def loadSettings(self):
         settings = self.getSettings()
+        if settings.value('input/mode') == 'file':
+            self.fileRadioButton.setChecked(True)
+        else:
+            self.directoryRadioButton.setChecked(True)
+        batch_mode = bool(int(settings.value('input/batch_mode') or 0))
+        self.batchModeCheckBox.setChecked(batch_mode)
         exclude = settings.value('input/exclude')
         if exclude:
             self.excludeEdit.setPlainText(exclude)
@@ -184,6 +191,12 @@ class DottorrentGUI(Ui_MainWindow):
 
     def saveSettings(self):
         settings = self.getSettings()
+        if self.fileRadioButton.isChecked():
+            mode = 'file'
+        else:
+            mode = 'directory'
+        settings.setValue('input/mode', mode)
+        settings.setValue('input/batch_mode', int(self.batchModeCheckBox.isChecked()))
         settings.setValue('input/exclude', self.excludeEdit.toPlainText())
         settings.setValue('seeding/trackers', self.trackerEdit.toPlainText())
         settings.setValue('seeding/web_seeds', self.webSeedEdit.toPlainText())
@@ -216,7 +229,6 @@ class DottorrentGUI(Ui_MainWindow):
     def inputTypeToggle(self):
         if self.fileRadioButton.isChecked():
             self.inputType = 'file'
-            self.batchModeCheckBox.setCheckState(QtCore.Qt.Unchecked)
             self.batchModeCheckBox.setEnabled(False)
             self.batchModeCheckBox.hide()
         else:
@@ -241,16 +253,8 @@ class DottorrentGUI(Ui_MainWindow):
             self.last_input_dir = os.path.split(fn)[0]
             self.initializeTorrent()
 
-    def inputDragEnterEvent(self, event):
-        if event.mimeData().hasUrls():
-            urls = event.mimeData().urls()
-            if len(urls) == 1 and urls[0].isLocalFile():
-                event.accept()
-                return
-        event.ignore()
-
-    def inputDropEvent(self, event):
-        path = event.mimeData().urls()[0].toLocalFile()
+    def injectInputPath(self, path):
+        path = path.strip()
         if os.path.isfile(path):
             self.inputType = 'file'
             self.batchModeCheckBox.setCheckState(QtCore.Qt.Unchecked)
@@ -263,6 +267,23 @@ class DottorrentGUI(Ui_MainWindow):
         self.inputEdit.setText(path)
         self.last_input_dir = os.path.split(path)[0]
         self.initializeTorrent()
+
+    def inputDragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            urls = event.mimeData().urls()
+            if len(urls) == 1 and urls[0].isLocalFile():
+                event.accept()
+                return
+        event.ignore()
+
+    def inputDropEvent(self, event):
+        path = event.mimeData().urls()[0].toLocalFile()
+        self.injectInputPath(path)
+
+    def pasteInput(self):
+        mimeData = self.clipboard().mimeData()
+        if mimeData.hasText():
+            self.injectInputPath(mimeData.text())
 
     def batchModeChanged(self, state):
         if state == QtCore.Qt.Checked:
@@ -486,6 +507,7 @@ def main():
     ui = DottorrentGUI()
     ui.setupUi(MainWindow)
     ui.loadSettings()
+    ui.clipboard = app.clipboard
     app.aboutToQuit.connect(lambda: ui.saveSettings())
     MainWindow.show()
     sys.exit(app.exec_())

@@ -30,22 +30,9 @@
        </sizepolicy>
       </property>
       <property name="title">
-       <string>Input</string>
+       <string>Input path</string>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="3" column="0" colspan="3">
-        <widget class="QLabel" name="excludeLabel">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Filename exclusion patterns</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0">
         <widget class="QRadioButton" name="fileRadioButton">
          <property name="sizePolicy">
@@ -59,7 +46,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="3" column="0">
         <widget class="QCheckBox" name="batchModeCheckBox">
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, a torrent will be created for each directory and file one level below the input directory. The piece size for each torrent will be determined automatically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -82,27 +69,20 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QLineEdit" name="inputEdit">
+       <item row="4" column="0" colspan="4">
+        <widget class="QLabel" name="excludeLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
-          <string/>
-         </property>
-         <property name="dragEnabled">
-          <bool>true</bool>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
+          <string>Filename exclusion patterns</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="2">
-        <widget class="QPushButton" name="browseButton">
-         <property name="text">
-          <string>Browse...</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0" colspan="3">
+       <item row="5" column="0" colspan="4">
         <widget class="QPlainTextEdit" name="excludeEdit">
          <property name="enabled">
           <bool>true</bool>
@@ -118,6 +98,33 @@
            <width>0</width>
            <height>112</height>
           </size>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QPushButton" name="browseButton">
+         <property name="text">
+          <string>Browse...</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QPushButton" name="pasteButton">
+         <property name="text">
+          <string>Paste from clipboard</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="4">
+        <widget class="QLineEdit" name="inputEdit">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="dragEnabled">
+          <bool>true</bool>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
