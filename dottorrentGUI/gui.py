@@ -16,8 +16,8 @@ from dottorrentGUI import __version__
 
 PROGRAM_NAME = "dottorrent-gui"
 PROGRAM_NAME_VERSION = "{} {}".format(PROGRAM_NAME, __version__)
-CREATOR = "dottorrent-gui/{} dottorrent/{}".format(
-    __version__, dottorrent.__version__)
+CREATOR = "dottorrent-gui/{} (https://github.com/kz26/dottorrent-gui)".format(
+    __version__)
 
 PIECE_SIZES = [None] + [2 ** i for i in range(14, 23)]
 
@@ -122,6 +122,9 @@ class DottorrentGUI(Ui_MainWindow):
 
         self.browseButton.clicked.connect(self.browseInput)
         self.batchModeCheckBox.stateChanged.connect(self.batchModeChanged)
+
+        self.inputEdit.dragEnterEvent = self.inputDragEnterEvent
+        self.inputEdit.dropEvent = self.inputDropEvent
 
         self.pieceCountLabel.hide()
         self.pieceSizeComboBox.addItem('Auto')
@@ -234,6 +237,29 @@ class DottorrentGUI(Ui_MainWindow):
             self.last_input_dir = os.path.split(fn)[0]
             self.initializeTorrent()
 
+    def inputDragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            urls = event.mimeData().urls()
+            if len(urls) == 1 and urls[0].isLocalFile():
+                event.accept()
+                return
+        event.ignore()
+
+    def inputDropEvent(self, event):
+        path = event.mimeData().urls()[0].toLocalFile()
+        if os.path.isfile(path):
+            self.inputType = 'file'
+            self.batchModeCheckBox.setCheckState(QtCore.Qt.Unchecked)
+            self.batchModeCheckBox.setEnabled(False)
+            self.batchModeCheckBox.hide()
+        else:
+            self.inputType = 'directory'
+            self.batchModeCheckBox.setEnabled(True)
+            self.batchModeCheckBox.show()
+        self.inputEdit.setText(path)
+        self.last_input_dir = os.path.split(path)[0]
+        self.initializeTorrent()
+
     def batchModeChanged(self, state):
         if state == QtCore.Qt.Checked:
             self.pieceSizeComboBox.setCurrentIndex(0)
@@ -293,6 +319,7 @@ class DottorrentGUI(Ui_MainWindow):
             self.torrent.include_md5 = (state == QtCore.Qt.Checked)
 
     def createButtonClicked(self):
+        self.torrent.exclude = self.excludeEdit.toPlainText().strip().splitlines()
         # Validate trackers and web seed URLs
         trackers = self.trackerEdit.toPlainText().strip().split()
         web_seeds = self.webSeedEdit.toPlainText().strip().split()

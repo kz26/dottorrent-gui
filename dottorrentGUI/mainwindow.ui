@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>496</width>
-    <height>768</height>
+    <height>1095</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,6 +33,19 @@
        <string>Input</string>
       </property>
       <layout class="QGridLayout" name="gridLayout">
+       <item row="3" column="0" colspan="3">
+        <widget class="QLabel" name="excludeLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Filename exclusion patterns</string>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0">
         <widget class="QRadioButton" name="fileRadioButton">
          <property name="sizePolicy">
@@ -43,6 +56,16 @@
          </property>
          <property name="text">
           <string>File</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="batchModeCheckBox">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, a torrent will be created for each directory and file one level below the input directory. The piece size for each torrent will be determined automatically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Batch mode</string>
          </property>
         </widget>
        </item>
@@ -64,6 +87,9 @@
          <property name="text">
           <string/>
          </property>
+         <property name="dragEnabled">
+          <bool>true</bool>
+         </property>
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -76,13 +102,22 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="batchModeCheckBox">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, a torrent will be created for each directory and file one level below the input directory. The piece size for each torrent will be determined automatically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <item row="4" column="0" colspan="3">
+        <widget class="QPlainTextEdit" name="excludeEdit">
+         <property name="enabled">
+          <bool>true</bool>
          </property>
-         <property name="text">
-          <string>Batch mode</string>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>112</height>
+          </size>
          </property>
         </widget>
        </item>
@@ -111,10 +146,16 @@
        <item>
         <widget class="QPlainTextEdit" name="trackerEdit">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+          <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>90</height>
+          </size>
          </property>
          <property name="sizeAdjustPolicy">
           <enum>QAbstractScrollArea::AdjustToContents</enum>
@@ -137,10 +178,16 @@
        <item>
         <widget class="QPlainTextEdit" name="webSeedEdit">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+          <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>90</height>
+          </size>
          </property>
          <property name="sizeAdjustPolicy">
           <enum>QAbstractScrollArea::AdjustToContents</enum>
@@ -297,7 +344,7 @@
      <x>0</x>
      <y>0</y>
      <width>496</width>
-     <height>27</height>
+     <height>32</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
