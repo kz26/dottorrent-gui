@@ -111,8 +111,8 @@ class DottorrentGUI(Ui_MainWindow):
         self.torrent = None
         self.MainWindow = MainWindow
 
-        self.actionImportTrackers.triggered.connect(self.import_trackers)
-        self.actionExportTrackers.triggered.connect(self.export_trackers)
+        self.actionImportProfile.triggered.connect(self.import_profile)
+        self.actionExportProfile.triggered.connect(self.export_profile)
         self.actionAbout.triggered.connect(self.showAboutDialog)
         self.actionQuit.triggered.connect(self.MainWindow.close)
 
@@ -164,6 +164,9 @@ class DottorrentGUI(Ui_MainWindow):
 
     def loadSettings(self):
         settings = self.getSettings()
+        exclude = settings.value('input/exclude')
+        if exclude:
+            self.excludeEdit.setPlainText(exclude)
         trackers = settings.value('seeding/trackers')
         if trackers:
             self.trackerEdit.setPlainText(trackers)
@@ -181,6 +184,7 @@ class DottorrentGUI(Ui_MainWindow):
 
     def saveSettings(self):
         settings = self.getSettings()
+        settings.setValue('input/exclude', self.excludeEdit.toPlainText())
         settings.setValue('seeding/trackers', self.trackerEdit.toPlainText())
         settings.setValue('seeding/web_seeds', self.webSeedEdit.toPlainText())
         settings.setValue('options/private',
@@ -373,6 +377,7 @@ class DottorrentGUI(Ui_MainWindow):
             web_seeds = self.webSeedEdit.toPlainText().strip().split()
             self.creation_thread = CreateTorrentBatchQThread(
                 path=self.inputEdit.text(),
+                exclude=self.excludeEdit.toPlainText().strip().splitlines(),
                 save_dir=save_dir,
                 trackers=trackers,
                 web_seeds=web_seeds,
@@ -430,10 +435,10 @@ class DottorrentGUI(Ui_MainWindow):
             self._statusBarMsg('Canceled')
         self.creation_thread = None
 
-    def export_trackers(self):
+    def export_profile(self):
 
         fn = QtWidgets.QFileDialog.getSaveFileName(
-            self.MainWindow, 'Save tracker profile', self.last_output_dir,
+            self.MainWindow, 'Save profile', self.last_output_dir,
             filter=('JSON configuration file (*.json)'))[0]
         if fn:
             trackers = self.trackerEdit.toPlainText().strip().split()
@@ -448,11 +453,11 @@ class DottorrentGUI(Ui_MainWindow):
             }
             with open(fn, 'w') as f:
                 json.dump(data, f, indent=4, sort_keys=True)
-            self._statusBarMsg("Tracker profile saved to " + fn)
+            self._statusBarMsg("Profile saved to " + fn)
 
-    def import_trackers(self):
+    def import_profile(self):
         fn = QtWidgets.QFileDialog.getOpenFileName(
-            self.MainWindow, 'Open tracker profile', self.last_input_dir,
+            self.MainWindow, 'Open profile', self.last_input_dir,
             filter=('JSON configuration file (*.json)'))[0]
         if fn:
             with open(fn) as f:
@@ -471,7 +476,7 @@ class DottorrentGUI(Ui_MainWindow):
             except Exception as e:
                 self._showError(str(e))
                 return
-            self._statusBarMsg("Tracker profile {} loaded".format(
+            self._statusBarMsg("Profile {} loaded".format(
                 os.path.split(fn)[1]))
 
 

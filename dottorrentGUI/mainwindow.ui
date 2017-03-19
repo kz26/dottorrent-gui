@@ -351,8 +351,8 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionImportTrackers"/>
-    <addaction name="actionExportTrackers"/>
+    <addaction name="actionImportProfile"/>
+    <addaction name="actionExportProfile"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -366,17 +366,17 @@
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionImportTrackers">
+  <action name="actionImportProfile">
    <property name="text">
-    <string>Import tracker profile...</string>
+    <string>Import profile...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="actionExportTrackers">
+  <action name="actionExportProfile">
    <property name="text">
-    <string>Export tracker profile...</string>
+    <string>Export profile...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
