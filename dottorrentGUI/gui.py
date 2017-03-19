@@ -19,7 +19,7 @@ PROGRAM_NAME_VERSION = "{} {}".format(PROGRAM_NAME, __version__)
 CREATOR = "dottorrent-gui/{} (https://github.com/kz26/dottorrent-gui)".format(
     __version__)
 
-PIECE_SIZES = [None] + [2 ** i for i in range(14, 26)]
+PIECE_SIZES = [None] + [2 ** i for i in range(14, 27)]
 
 
 class CreateTorrentQThread(QtCore.QThread):

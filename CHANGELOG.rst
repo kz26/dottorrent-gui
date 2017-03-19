@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.3.0
+-----
+* [NEW] Remember file/directory/batch mode settings for next startup (issue #5)
+* [NEW] Ability to set input path via clipboard paste or drag-and-drop (issues #6)
+* [NEW] Increase maximum piece size to 64MB (issue #7)
+* [NEW] Add support for filename exclusion pattern in dottorrent 1.8.0 (issue #9)
+
 1.2.2
 -----
 * [FIX] window resizing behavior
