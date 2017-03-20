@@ -16,7 +16,7 @@ Features
 * Full Unicode support
 * Automatic and manual piece size selection, up to 64MB
 * Batch torrent creation mode
-* Filename pattern exclusion
+* Filename exclusion patterns
 * HTTP/web seeds support `(BEP 19) <http://www.bittorrent.org/beps/bep_0019.html>`_
 * Private flag support `(BEP 27) <http://www.bittorrent.org/beps/bep_0027.html>`_
 * User-definable source string

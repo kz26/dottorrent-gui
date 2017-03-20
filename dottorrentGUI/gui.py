@@ -293,7 +293,8 @@ class DottorrentGUI(Ui_MainWindow):
             self.pieceCountLabel.hide()
         else:
             self.pieceSizeComboBox.setEnabled(True)
-            self.pieceCountLabel.show()
+            if self.torrent:
+                self.pieceCountLabel.show()
 
     def initializeTorrent(self):
         self.torrent = dottorrent.Torrent(self.inputEdit.text())
@@ -463,11 +464,13 @@ class DottorrentGUI(Ui_MainWindow):
             self.MainWindow, 'Save profile', self.last_output_dir,
             filter=('JSON configuration file (*.json)'))[0]
         if fn:
+            exclude = self.excludeEdit.toPlainText().strip().splitlines()
             trackers = self.trackerEdit.toPlainText().strip().split()
             web_seeds = self.webSeedEdit.toPlainText().strip().split()
             private = self.privateTorrentCheckBox.isChecked()
             source = self.sourceEdit.text()
             data = {
+                'exclude': exclude,
                 'trackers': trackers,
                 'web_seeds': web_seeds,
                 'private': private,
@@ -484,15 +487,15 @@ class DottorrentGUI(Ui_MainWindow):
         if fn:
             with open(fn) as f:
                 data = json.load(f)
+            exclude = data.get('exclude', [])
             trackers = data.get('trackers', [])
             web_seeds = data.get('web_seeds', [])
             private = data.get('private', False)
             source = data.get('source', '')
             try:
-                ts = os.linesep.join(trackers)
-                self.trackerEdit.setPlainText(ts)
-                ws = os.linesep.join(web_seeds)
-                self.webSeedEdit.setPlainText(ws)
+                self.excludeEdit.setPlainText(os.linesep.join(exclude))
+                self.trackerEdit.setPlainText(os.linesep.join(trackers))
+                self.webSeedEdit.setPlainText(os.linesep.join(web_seeds))
                 self.privateTorrentCheckBox.setChecked(private)
                 self.sourceEdit.setText(source)
             except Exception as e:

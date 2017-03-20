@@ -1,9 +1,14 @@
 Changelog
 =========
 
+1.3.2
+-----
+* [ENHANCEMENT] Include filename exclusion patterns in profiles
+* [FIX] Minor UI bugfixes and code cleanup
+
 1.3.1
 -----
-[FIX] Add "one per line" notation to filename exclusion patterns label
+* [FIX] Add "one per line" notation to filename exclusion patterns label
 
 1.3.0
 -----
