@@ -15,7 +15,7 @@ setup(
 
     # Project uses reStructuredText, so ensure that the docutils get
     # installed or upgraded on the target machine
-    install_requires=['dottorrent>=1.8.0', 'PyQt5>=5.7'],
+    install_requires=['dottorrent>=1.9.0', 'PyQt5>=5.7'],
 
     # metadata for upload to PyPI
     author="Kevin Zhang",

@@ -5,6 +5,7 @@ Changelog
 -----
 * [ENHANCEMENT] Include filename exclusion patterns in profiles
 * [FIX] Minor UI bugfixes and code cleanup
+* [CHANGE] Require dottorrent 1.9.0 or higher
 
 1.3.1
 -----
