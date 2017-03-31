@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.3.3
+-----
+* [FIX] Crash when using batch mode
+* [FIX] Exclusion patterns not used for top level inputs in batch mode
+
 1.3.2
 -----
 * [ENHANCEMENT] Include filename exclusion patterns in profiles

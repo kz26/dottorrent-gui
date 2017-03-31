@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 
-from datetime import datetime
 import json
 import os
 import sys
+from datetime import datetime
+from fnmatch import fnmatch
 
-from PyQt5 import QtCore, QtGui, QtWidgets
 import dottorrent
 import humanfriendly
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-from dottorrentGUI import Ui_MainWindow
-from dottorrentGUI import Ui_AboutDialog
-from dottorrentGUI import __version__
+from dottorrentGUI import Ui_AboutDialog, Ui_MainWindow, __version__
 
 
 PROGRAM_NAME = "dottorrent-gui"
@@ -54,10 +53,11 @@ class CreateTorrentBatchQThread(QtCore.QThread):
     progress_update = QtCore.pyqtSignal(str, int, int)
     onError = QtCore.pyqtSignal(str)
 
-    def __init__(self, path, save_dir, trackers, web_seeds,
+    def __init__(self, path, exclude, save_dir, trackers, web_seeds,
                  private, source, comment, include_md5):
         super().__init__()
         self.path = path
+        self.exclude = exclude
         self.save_dir = save_dir
         self.trackers = trackers
         self.web_seeds = web_seeds
@@ -72,12 +72,15 @@ class CreateTorrentBatchQThread(QtCore.QThread):
 
         entries = os.listdir(self.path)
         for i, p in enumerate(entries):
+            if any(fnmatch(p, ex) for ex in self.exclude):
+                continue
             p = os.path.join(self.path, p)
             if not dottorrent.is_hidden_file(p):
                 sfn = os.path.split(p)[1] + '.torrent'
                 self.progress_update.emit(sfn, i, len(entries))
                 t = dottorrent.Torrent(
                     p,
+                    exclude=self.exclude,
                     trackers=self.trackers,
                     web_seeds=self.web_seeds,
                     private=self.private,
