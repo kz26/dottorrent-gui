@@ -109,6 +109,7 @@ class DottorrentGUI(Ui_MainWindow):
 
     def setupUi(self, MainWindow):
         super().setupUi(MainWindow)
+        MainWindow.resize(500, 0)
         MainWindow.setWindowTitle(PROGRAM_NAME_VERSION)
 
         self.torrent = None
