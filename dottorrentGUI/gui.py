@@ -109,8 +109,6 @@ class DottorrentGUI(Ui_MainWindow):
 
     def setupUi(self, MainWindow):
         super().setupUi(MainWindow)
-        MainWindow.resize(500, 0)
-        MainWindow.setWindowTitle(PROGRAM_NAME_VERSION)
 
         self.torrent = None
         self.MainWindow = MainWindow
@@ -534,6 +532,18 @@ def main():
     MainWindow = QtWidgets.QMainWindow()
     ui = DottorrentGUI()
     ui.setupUi(MainWindow)
+
+    MainWindow.resize(500, 0)
+    MainWindow.setGeometry(
+        QtWidgets.QStyle.alignedRect(
+            QtCore.Qt.LeftToRight,
+            QtCore.Qt.AlignCenter,
+            MainWindow.size(),
+            app.desktop().availableGeometry()
+        )  
+    )
+    MainWindow.setWindowTitle(PROGRAM_NAME_VERSION)
+
     ui.loadSettings()
     ui.clipboard = app.clipboard
     app.aboutToQuit.connect(lambda: ui.saveSettings())
