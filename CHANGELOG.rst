@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.3.4
+-----
+* [FIX] Odd window resizing behavior on reset
+
 1.3.3
 -----
 * [FIX] Crash when using batch mode

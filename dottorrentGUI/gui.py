@@ -156,7 +156,9 @@ class DottorrentGUI(Ui_MainWindow):
         self.createButton.clicked.connect(self.createButtonClicked)
         self.cancelButton.hide()
         self.cancelButton.clicked.connect(self.cancel_creation)
-        self.resetButton.clicked.connect(lambda: self.setupUi(MainWindow))
+        self.resetButton.clicked.connect(self.reset)
+
+        self._statusBarMsg('Ready')
 
     def getSettings(self):
         return QtCore.QSettings(
@@ -506,6 +508,24 @@ class DottorrentGUI(Ui_MainWindow):
                 return
             self._statusBarMsg("Profile {} loaded".format(
                 os.path.split(fn)[1]))
+
+    def reset(self):
+        self._statusBarMsg('')
+        self.createButton.setEnabled(False)
+        self.fileRadioButton.setChecked(True)
+        self.batchModeCheckBox.setChecked(False)
+        self.inputEdit.setText(None)
+        self.excludeEdit.setPlainText(None)
+        self.trackerEdit.setPlainText(None)
+        self.webSeedEdit.setPlainText(None)
+        self.pieceSizeComboBox.setCurrentIndex(0)
+        self.pieceCountLabel.hide()
+        self.commentEdit.setText(None)
+        self.privateTorrentCheckBox.setChecked(False)
+        self.md5CheckBox.setChecked(False)
+        self.sourceEdit.setText(None)
+        self.torrent = None
+        self._statusBarMsg('Ready')
 
 
 def main():
