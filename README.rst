@@ -34,7 +34,7 @@ Binary releases of stable versions for 64-bit Windows can be found at
 `https://github.com/kz26/dottorrent-gui/releases <https://github.com/kz26/dottorrent-gui/releases>`_.
 Extract to a folder and run ``dottorrent_gui.exe``.
 
-Linux
+Linux and Mac OS X
 -----
 
 **Requirements**
@@ -52,5 +52,5 @@ To run: ``dottorrent-gui``
 License
 -------
 
-© 2016 Kevin Zhang. Made available under the terms of the
+© 2017 Kevin Zhang. Made available under the terms of the
 `GNU General Public License v3 <http://choosealicense.com/licenses/gpl-3.0/>`_.
