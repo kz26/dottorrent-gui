@@ -260,11 +260,13 @@ class DottorrentGUI(Ui_MainWindow):
     def injectInputPath(self, path):
         if os.path.exists(path):
             if os.path.isfile(path):
+                self.fileRadioButton.setChecked(True)
                 self.inputType = 'file'
                 self.batchModeCheckBox.setCheckState(QtCore.Qt.Unchecked)
                 self.batchModeCheckBox.setEnabled(False)
                 self.batchModeCheckBox.hide()
             else:
+                self.directoryRadioButton.setChecked(True)
                 self.inputType = 'directory'
                 self.batchModeCheckBox.setEnabled(True)
                 self.batchModeCheckBox.show()

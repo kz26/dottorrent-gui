@@ -3,7 +3,8 @@ Changelog
 
 1.3.5
 -----
-* [FIX] Paste from clipboard with quoted paths
+* [FIX] Paste from clipboard with quoted paths (https://github.com/kz26/dottorrent-gui/issues/16)
+* [FIX] Properly set file/directory radio button state on clipboard paste event
 * [CHANGE] Require dottorrent 1.9.2 or higher
 
 1.3.4
