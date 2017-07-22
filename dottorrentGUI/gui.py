@@ -258,7 +258,6 @@ class DottorrentGUI(Ui_MainWindow):
             self.initializeTorrent()
 
     def injectInputPath(self, path):
-        path = path.strip()
         if os.path.exists(path):
             if os.path.isfile(path):
                 self.inputType = 'file'
@@ -288,7 +287,8 @@ class DottorrentGUI(Ui_MainWindow):
     def pasteInput(self):
         mimeData = self.clipboard().mimeData()
         if mimeData.hasText():
-            self.injectInputPath(mimeData.text())
+            path = mimeData.text().strip("'\"")
+            self.injectInputPath(path)
 
     def batchModeChanged(self, state):
         if state == QtCore.Qt.Checked:

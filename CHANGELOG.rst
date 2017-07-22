@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.3.5
+-----
+* [FIX] Paste from clipboard with quoted paths
+* [CHANGE] Require dottorrent 1.9.2 or higher
+
 1.3.4
 -----
 * [FIX] Odd window resizing behavior on reset
