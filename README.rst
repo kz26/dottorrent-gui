@@ -32,7 +32,7 @@ Windows
 
 Binary releases of stable versions for 64-bit Windows can be found at
 `https://github.com/kz26/dottorrent-gui/releases <https://github.com/kz26/dottorrent-gui/releases>`_.
-Extract to a folder and run ``dottorrent_gui.exe``.
+Extract to a folder and run ``dottorrent_gui.exe``. You may need to download and install the `Microsoft Visual C++ Redistributable for Visual Studio 2015 <https://www.microsoft.com/en-us/download/details.aspx?id=48145>`_.
 
 Linux and Mac OS X
 -----
