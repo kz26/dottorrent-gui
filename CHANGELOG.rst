@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.3.6
+-----
+* [NEW] Implement portable mode
+* [FIX] Minor UI behavior fixes
+
 1.3.5
 -----
 * [FIX] Paste from clipboard with quoted paths (https://github.com/kz26/dottorrent-gui/issues/16)

@@ -48,6 +48,14 @@ Development: ``git clone`` this repository, then ``pip install .``
 
 To run: ``dottorrent-gui``
 
+-------------
+Portable Mode
+-------------
+
+dottorrent-gui can be configured to run in portable mode, good for running from USB drives and network shares.
+To enable this, simply create an empty file named ``dottorrent-gui.ini`` in the same directory as the
+main excecutable.
+
 -------
 License
 -------

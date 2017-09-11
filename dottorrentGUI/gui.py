@@ -160,6 +160,13 @@ class DottorrentGUI(Ui_MainWindow):
         self._statusBarMsg('Ready')
 
     def getSettings(self):
+        portable_fn = PROGRAM_NAME + '.ini'
+        portable_fn = os.path.join(os.getcwd(), portable_fn)
+        if os.path.exists(portable_fn):
+            return QtCore.QSettings(
+                portable_fn,
+                QtCore.QSettings.IniFormat
+            )
         return QtCore.QSettings(
             QtCore.QSettings.IniFormat,
             QtCore.QSettings.UserScope,
@@ -169,9 +176,7 @@ class DottorrentGUI(Ui_MainWindow):
 
     def loadSettings(self):
         settings = self.getSettings()
-        if settings.value('input/mode') == 'file':
-            self.fileRadioButton.setChecked(True)
-        else:
+        if settings.value('input/mode') == 'directory':
             self.directoryRadioButton.setChecked(True)
         batch_mode = bool(int(settings.value('input/batch_mode') or 0))
         self.batchModeCheckBox.setChecked(batch_mode)
@@ -243,7 +248,7 @@ class DottorrentGUI(Ui_MainWindow):
 
     def browseInput(self):
         qfd = QtWidgets.QFileDialog(self.MainWindow)
-        if self.last_input_dir:
+        if self.last_input_dir and os.path.exists(self.last_input_dir):
             qfd.setDirectory(self.last_input_dir)
         if self.inputType == 'file':
             qfd.setWindowTitle('Select file')
@@ -377,7 +382,7 @@ class DottorrentGUI(Ui_MainWindow):
                 os.path.split(self.inputEdit.text())[1])[0] + '.torrent'
         else:
             save_fn = self.inputEdit.text().split(os.sep)[-1] + '.torrent'
-        if self.last_output_dir:
+        if self.last_output_dir and os.path.exists(self.last_output_dir):
             save_fn = os.path.join(self.last_output_dir, save_fn)
         fn = QtWidgets.QFileDialog.getSaveFileName(
             self.MainWindow, 'Save torrent', save_fn,
