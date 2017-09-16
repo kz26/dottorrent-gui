@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'about.ui'
 #
-# Created by: PyQt5 UI code generator 5.7
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -86,5 +86,5 @@ class Ui_AboutDialog(object):
         self.programNameLabel.setText(_translate("AboutDialog", "dottorrent-gui"))
         self.programVersionLabel.setText(_translate("AboutDialog", "PROGRAM_VERSION"))
         self.dtVersionLabel.setText(_translate("AboutDialog", "DOTTORRENT_VERSION"))
-        self.infoLabel.setText(_translate("AboutDialog", "<html><head/><body><p><span style=\" font-size:10pt;\">© 2016 Kevin Zhang</span></p><p><span style=\" font-size:10pt;\">dottorrent-gui is made available under the terms of the </span><a href=\"http://choosealicense.com/licenses/gpl-3.0/\"><span style=\" font-size:10pt; text-decoration: underline; color:#0000ff;\">GNU General Public License, version 3</span></a><span style=\" font-size:10pt;\">.</span></p><p><a href=\"https://github.com/kz26/dottorrent-gui\"><span style=\" font-size:10pt; text-decoration: underline; color:#0000ff;\">https://github.com/kz26/dottorrent-gui</span></a></p></body></html>"))
+        self.infoLabel.setText(_translate("AboutDialog", "<html><head/><body><p><span style=\" font-size:10pt;\">© 2017 Kevin Zhang</span></p><p><span style=\" font-size:10pt;\">dottorrent-gui is made available under the terms of the </span><a href=\"http://choosealicense.com/licenses/gpl-3.0/\"><span style=\" font-size:10pt; text-decoration: underline; color:#0000ff;\">GNU General Public License, version 3</span></a><span style=\" font-size:10pt;\">.</span></p><p><a href=\"https://github.com/kz26/dottorrent-gui\"><span style=\" font-size:10pt; text-decoration: underline; color:#0000ff;\">https://github.com/kz26/dottorrent-gui</span></a></p></body></html>"))
 
