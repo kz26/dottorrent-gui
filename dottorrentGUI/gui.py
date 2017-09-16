@@ -118,9 +118,9 @@ class DottorrentGUI(Ui_MainWindow):
         self.actionAbout.triggered.connect(self.showAboutDialog)
         self.actionQuit.triggered.connect(self.MainWindow.close)
 
-        self.fileRadioButton.toggled.connect(self.inputTypeToggle)
+        self.fileRadioButton.toggled.connect(self.inputModeToggle)
         self.fileRadioButton.setChecked(True)
-        self.directoryRadioButton.toggled.connect(self.inputTypeToggle)
+        self.directoryRadioButton.toggled.connect(self.inputModeToggle)
 
         self.browseButton.clicked.connect(self.browseInput)
         self.batchModeCheckBox.stateChanged.connect(self.batchModeChanged)
@@ -200,11 +200,7 @@ class DottorrentGUI(Ui_MainWindow):
 
     def saveSettings(self):
         settings = self.getSettings()
-        if self.fileRadioButton.isChecked():
-            mode = 'file'
-        else:
-            mode = 'directory'
-        settings.setValue('input/mode', mode)
+        settings.setValue('input/mode', self.inputMode)
         settings.setValue('input/batch_mode', int(self.batchModeCheckBox.isChecked()))
         settings.setValue('input/exclude', self.excludeEdit.toPlainText())
         settings.setValue('seeding/trackers', self.trackerEdit.toPlainText())
@@ -235,13 +231,13 @@ class DottorrentGUI(Ui_MainWindow):
             dottorrent.__version__))
         qdlg.exec_()
 
-    def inputTypeToggle(self):
+    def inputModeToggle(self):
         if self.fileRadioButton.isChecked():
-            self.inputType = 'file'
+            self.inputMode = 'file'
             self.batchModeCheckBox.setEnabled(False)
             self.batchModeCheckBox.hide()
         else:
-            self.inputType = 'directory'
+            self.inputMode = 'directory'
             self.batchModeCheckBox.setEnabled(True)
             self.batchModeCheckBox.show()
         self.inputEdit.setText('')
@@ -250,7 +246,7 @@ class DottorrentGUI(Ui_MainWindow):
         qfd = QtWidgets.QFileDialog(self.MainWindow)
         if self.last_input_dir and os.path.exists(self.last_input_dir):
             qfd.setDirectory(self.last_input_dir)
-        if self.inputType == 'file':
+        if self.inputMode == 'file':
             qfd.setWindowTitle('Select file')
             qfd.setFileMode(QtWidgets.QFileDialog.ExistingFile)
         else:
@@ -266,13 +262,13 @@ class DottorrentGUI(Ui_MainWindow):
         if os.path.exists(path):
             if os.path.isfile(path):
                 self.fileRadioButton.setChecked(True)
-                self.inputType = 'file'
+                self.inputMode = 'file'
                 self.batchModeCheckBox.setCheckState(QtCore.Qt.Unchecked)
                 self.batchModeCheckBox.setEnabled(False)
                 self.batchModeCheckBox.hide()
             else:
                 self.directoryRadioButton.setChecked(True)
-                self.inputType = 'directory'
+                self.inputMode = 'directory'
                 self.batchModeCheckBox.setEnabled(True)
                 self.batchModeCheckBox.show()
             self.inputEdit.setText(path)
@@ -316,7 +312,7 @@ class DottorrentGUI(Ui_MainWindow):
             self._showError(str(e))
             return
         ptail = os.path.split(self.torrent.path)[1]
-        if self.inputType == 'file':
+        if self.inputMode == 'file':
             self._statusBarMsg(
                 "{}: {}".format(ptail, humanfriendly.format_size(
                     t_info[0], binary=True)))
@@ -371,7 +367,7 @@ class DottorrentGUI(Ui_MainWindow):
         self.torrent.comment = self.commentEdit.text() or None
         self.torrent.source = self.sourceEdit.text() or None
         self.torrent.include_md5 = self.md5CheckBox.isChecked()
-        if self.batchModeCheckBox.isChecked():
+        if self.inputMode == 'directory' and self.batchModeCheckBox.isChecked():
             self.createTorrentBatch()
         else:
             self.createTorrent()

@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.3.7
+-----
+* [FIX] crash when creating single-file torrent with batch mode enabled (https://github.com/kz26/dottorrent-gui/issues/20)
+* [CHANGE] Minor code cleanup
+
 1.3.6
 -----
 * [NEW] Implement portable mode
