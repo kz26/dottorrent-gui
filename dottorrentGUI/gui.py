@@ -194,6 +194,16 @@ class DottorrentGUI(Ui_MainWindow):
         source = settings.value('options/source')
         if source:
             self.sourceEdit.setText(source)
+        compute_md5 = bool(int(settings.value('options/compute_md5') or 0))
+        if compute_md5:
+            self.md5CheckBox.setChecked(compute_md5)
+        mainwindow_size = settings.value("geometry/size")
+        if mainwindow_size:
+            self.MainWindow.resize(mainwindow_size)
+
+        mainwindow_position = settings.value("geometry/position")
+        if mainwindow_position:
+            self.MainWindow.move(mainwindow_position)
         self.last_input_dir = settings.value('history/last_input_dir') or None
         self.last_output_dir = settings.value(
             'history/last_output_dir') or None
@@ -208,6 +218,9 @@ class DottorrentGUI(Ui_MainWindow):
         settings.setValue('options/private',
                           int(self.privateTorrentCheckBox.isChecked()))
         settings.setValue('options/source', self.sourceEdit.text())
+        settings.setValue('options/compute_md5', int(self.md5CheckBox.isChecked()))
+        settings.setValue('geometry/size', self.MainWindow.size())
+        settings.setValue('geometry/position', self.MainWindow.pos())
         if self.last_input_dir:
             settings.setValue('history/last_input_dir', self.last_input_dir)
         if self.last_output_dir:
