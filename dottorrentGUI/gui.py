@@ -200,7 +200,6 @@ class DottorrentGUI(Ui_MainWindow):
         mainwindow_size = settings.value("geometry/size")
         if mainwindow_size:
             self.MainWindow.resize(mainwindow_size)
-
         mainwindow_position = settings.value("geometry/position")
         if mainwindow_position:
             self.MainWindow.move(mainwindow_position)
