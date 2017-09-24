@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.3.8
+-----
+* [ENHANCEMENT] Remember more GUI state (https://github.com/kz26/dottorrent-gui/pull/21)
+
 1.3.7
 -----
 * [FIX] crash when creating single-file torrent with batch mode enabled (https://github.com/kz26/dottorrent-gui/issues/20)
