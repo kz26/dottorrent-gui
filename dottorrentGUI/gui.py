@@ -194,6 +194,15 @@ class DottorrentGUI(Ui_MainWindow):
         source = settings.value('options/source')
         if source:
             self.sourceEdit.setText(source)
+        compute_md5 = bool(int(settings.value('options/compute_md5') or 0))
+        if compute_md5:
+            self.md5CheckBox.setChecked(compute_md5)
+        mainwindow_size = settings.value("geometry/size")
+        if mainwindow_size:
+            self.MainWindow.resize(mainwindow_size)
+        mainwindow_position = settings.value("geometry/position")
+        if mainwindow_position:
+            self.MainWindow.move(mainwindow_position)
         self.last_input_dir = settings.value('history/last_input_dir') or None
         self.last_output_dir = settings.value(
             'history/last_output_dir') or None
@@ -208,6 +217,9 @@ class DottorrentGUI(Ui_MainWindow):
         settings.setValue('options/private',
                           int(self.privateTorrentCheckBox.isChecked()))
         settings.setValue('options/source', self.sourceEdit.text())
+        settings.setValue('options/compute_md5', int(self.md5CheckBox.isChecked()))
+        settings.setValue('geometry/size', self.MainWindow.size())
+        settings.setValue('geometry/position', self.MainWindow.pos())
         if self.last_input_dir:
             settings.setValue('history/last_input_dir', self.last_input_dir)
         if self.last_output_dir:
@@ -475,12 +487,14 @@ class DottorrentGUI(Ui_MainWindow):
             trackers = self.trackerEdit.toPlainText().strip().split()
             web_seeds = self.webSeedEdit.toPlainText().strip().split()
             private = self.privateTorrentCheckBox.isChecked()
+            compute_md5 = self.md5CheckBox.isChecked()
             source = self.sourceEdit.text()
             data = {
                 'exclude': exclude,
                 'trackers': trackers,
                 'web_seeds': web_seeds,
                 'private': private,
+                'compute_md5': compute_md5,
                 'source': source
             }
             with open(fn, 'w') as f:
@@ -498,12 +512,14 @@ class DottorrentGUI(Ui_MainWindow):
             trackers = data.get('trackers', [])
             web_seeds = data.get('web_seeds', [])
             private = data.get('private', False)
+            compute_md5 = data.get('compute_md5', False)
             source = data.get('source', '')
             try:
                 self.excludeEdit.setPlainText(os.linesep.join(exclude))
                 self.trackerEdit.setPlainText(os.linesep.join(trackers))
                 self.webSeedEdit.setPlainText(os.linesep.join(web_seeds))
                 self.privateTorrentCheckBox.setChecked(private)
+                self.md5CheckBox.setChecked(compute_md5)
                 self.sourceEdit.setText(source)
             except Exception as e:
                 self._showError(str(e))
