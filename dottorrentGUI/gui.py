@@ -20,6 +20,11 @@ CREATOR = "dottorrent-gui/{} (https://github.com/kz26/dottorrent-gui)".format(
 
 PIECE_SIZES = [None] + [2 ** i for i in range(14, 27)]
 
+if getattr(sys, 'frozen', False):
+    _basedir = sys._MEIPASS
+else:
+    _basedir = os.path.dirname(__file__)
+
 
 class CreateTorrentQThread(QtCore.QThread):
 
@@ -161,7 +166,7 @@ class DottorrentGUI(Ui_MainWindow):
 
     def getSettings(self):
         portable_fn = PROGRAM_NAME + '.ini'
-        portable_fn = os.path.join(os.getcwd(), portable_fn)
+        portable_fn = os.path.join(_basedir, portable_fn)
         if os.path.exists(portable_fn):
             return QtCore.QSettings(
                 portable_fn,

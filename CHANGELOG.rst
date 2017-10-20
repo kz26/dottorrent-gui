@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.3.9
+-----
+* [FIX] incorrect enumeration of settings file path in portable mode
+
 1.3.8
 -----
 * [ENHANCEMENT] Remember more GUI state (https://github.com/kz26/dottorrent-gui/pull/21)
