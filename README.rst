@@ -21,7 +21,7 @@ Features
 * Private flag support `(BEP 27) <http://www.bittorrent.org/beps/bep_0027.html>`_
 * User-definable source string
 * Optional MD5 file hash inclusion
-* Import/export of profiles (trackers, web seeds, source string, filename exclusion patterns)
+* `Import/export of profiles <https://github.com/kz26/dottorrent-gui/wiki/Profiles>`_ (trackers, web seeds, source string, filename exclusion patterns)
 
 ------------
 Installation
