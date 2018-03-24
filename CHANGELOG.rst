@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.3.10
+------
+* [FIX] Add missing humanfriendly dependency
+
 1.3.9
 -----
 * [FIX] incorrect enumeration of settings file path in portable mode
