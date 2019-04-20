@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.3.11
+------
+* [ENHANCEMENT/FIX] Main window area now scrolls to prevent overflow issues on lower-resolution screens 
+
 1.3.10
 ------
 * [FIX] Add missing humanfriendly dependency

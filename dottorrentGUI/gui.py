@@ -557,15 +557,6 @@ def main():
     ui = DottorrentGUI()
     ui.setupUi(MainWindow)
 
-    MainWindow.resize(500, 0)
-    MainWindow.setGeometry(
-        QtWidgets.QStyle.alignedRect(
-            QtCore.Qt.LeftToRight,
-            QtCore.Qt.AlignCenter,
-            MainWindow.size(),
-            app.desktop().availableGeometry()
-        )  
-    )
     MainWindow.setWindowTitle(PROGRAM_NAME_VERSION)
 
     ui.loadSettings()
