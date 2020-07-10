@@ -166,8 +166,11 @@ class DottorrentGUI(Ui_MainWindow):
 
     def getSettings(self):
         portable_fn = PROGRAM_NAME + '.ini'
-        portable_fn = os.path.join(_basedir, portable_fn)
-        if os.path.exists(portable_fn):
+        portable_dn = os.path.join(_basedir, 'data')
+        if os.path.exists(portable_dn):
+            portable_fn = os.path.join(portable_dn, portable_fn)
+            if not os.path.exists(portable_fn):
+                open(portable_fn, 'a').close()
             return QtCore.QSettings(
                 portable_fn,
                 QtCore.QSettings.IniFormat

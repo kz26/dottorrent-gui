@@ -53,7 +53,7 @@ Portable Mode
 -------------
 
 dottorrent-gui can be configured to run in portable mode, good for running from USB drives and network shares.
-To enable this, simply create an empty file named ``dottorrent-gui.ini`` in the same directory as the
+To enable this, simply create a folder named ``data`` in the same directory as the
 main excecutable.
 
 -------
