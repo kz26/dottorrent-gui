@@ -366,6 +366,16 @@
              </property>
             </widget>
            </item>
+           <item row="8" column="0" colspan="2">
+            <widget class="QCheckBox" name="xseedCheckBox">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, this adds an entropy field to the info section of the metainfo and sets it to a random integer, to help with cross-seeding.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Randomise info hash</string>
+             </property>
+            </widget>
+           </item>
            <item row="4" column="0">
             <widget class="QLabel" name="commentLabel">
              <property name="sizePolicy">

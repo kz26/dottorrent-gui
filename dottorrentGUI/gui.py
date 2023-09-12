@@ -59,7 +59,7 @@ class CreateTorrentBatchQThread(QtCore.QThread):
     onError = QtCore.pyqtSignal(str)
 
     def __init__(self, path, exclude, save_dir, trackers, web_seeds,
-                 private, source, comment, include_md5):
+                 private, source, xseed, comment, include_md5):
         super().__init__()
         self.path = path
         self.exclude = exclude
@@ -68,6 +68,7 @@ class CreateTorrentBatchQThread(QtCore.QThread):
         self.web_seeds = web_seeds
         self.private = private
         self.source = source
+        self.xseed = xseed
         self.comment = comment
         self.include_md5 = include_md5
 
@@ -90,6 +91,7 @@ class CreateTorrentBatchQThread(QtCore.QThread):
                     web_seeds=self.web_seeds,
                     private=self.private,
                     source=self.source,
+                    xseed=self.xseed,
                     comment=self.comment,
                     include_md5=self.include_md5,
                     creation_date=datetime.now(),
@@ -152,6 +154,9 @@ class DottorrentGUI(Ui_MainWindow):
         self.sourceEdit.textEdited.connect(
             self.sourceEdited)
 
+        self.xseedCheckBox.stateChanged.connect(
+            self.xseedChanged)
+
         self.md5CheckBox.stateChanged.connect(
             self.md5Changed)
 
@@ -199,6 +204,9 @@ class DottorrentGUI(Ui_MainWindow):
         source = settings.value('options/source')
         if source:
             self.sourceEdit.setText(source)
+        xseed = bool(int(settings.value('options/xseed') or 0))
+        if xseed:
+            self.xseedCheckBox.setChecked(xseed)
         compute_md5 = bool(int(settings.value('options/compute_md5') or 0))
         if compute_md5:
             self.md5CheckBox.setChecked(compute_md5)
@@ -222,6 +230,7 @@ class DottorrentGUI(Ui_MainWindow):
         settings.setValue('options/private',
                           int(self.privateTorrentCheckBox.isChecked()))
         settings.setValue('options/source', self.sourceEdit.text())
+        settings.setValue('options/xseed', int(self.xseedCheckBox.isChecked()))
         settings.setValue('options/compute_md5', int(self.md5CheckBox.isChecked()))
         settings.setValue('geometry/size', self.MainWindow.size())
         settings.setValue('geometry/position', self.MainWindow.pos())
@@ -365,6 +374,10 @@ class DottorrentGUI(Ui_MainWindow):
         if getattr(self, 'torrent', None):
             self.torrent.private = (state == QtCore.Qt.Checked)
 
+    def xseedChanged(self, state):
+        if getattr(self, 'torrent', None):
+            self.torrent.xseed = (state == QtCore.Qt.Checked)
+
     def md5Changed(self, state):
         if getattr(self, 'torrent', None):
             self.torrent.include_md5 = (state == QtCore.Qt.Checked)
@@ -381,6 +394,7 @@ class DottorrentGUI(Ui_MainWindow):
             self._showError(str(e))
             return
         self.torrent.private = self.privateTorrentCheckBox.isChecked()
+        self.torrent.xseed = self.xseedCheckBox.isChecked()
         self.torrent.comment = self.commentEdit.text() or None
         self.torrent.source = self.sourceEdit.text() or None
         self.torrent.include_md5 = self.md5CheckBox.isChecked()
@@ -431,6 +445,7 @@ class DottorrentGUI(Ui_MainWindow):
                 private=self.privateTorrentCheckBox.isChecked(),
                 source=self.sourceEdit.text(),
                 comment=self.commentEdit.text(),
+                xseed=self.xseedCheckBox.isChecked(),
                 include_md5=self.md5CheckBox.isChecked(),
             )
             self.creation_thread.started.connect(
@@ -492,6 +507,7 @@ class DottorrentGUI(Ui_MainWindow):
             trackers = self.trackerEdit.toPlainText().strip().split()
             web_seeds = self.webSeedEdit.toPlainText().strip().split()
             private = self.privateTorrentCheckBox.isChecked()
+            xseed = self.xseedCheckBox.isChecked()
             compute_md5 = self.md5CheckBox.isChecked()
             source = self.sourceEdit.text()
             data = {
@@ -500,6 +516,7 @@ class DottorrentGUI(Ui_MainWindow):
                 'web_seeds': web_seeds,
                 'private': private,
                 'compute_md5': compute_md5,
+                'xseed': xseed,
                 'source': source
             }
             with open(fn, 'w') as f:
@@ -517,6 +534,7 @@ class DottorrentGUI(Ui_MainWindow):
             trackers = data.get('trackers', [])
             web_seeds = data.get('web_seeds', [])
             private = data.get('private', False)
+            xseed = data.get('xseed', False)
             compute_md5 = data.get('compute_md5', False)
             source = data.get('source', '')
             try:
@@ -524,6 +542,7 @@ class DottorrentGUI(Ui_MainWindow):
                 self.trackerEdit.setPlainText(os.linesep.join(trackers))
                 self.webSeedEdit.setPlainText(os.linesep.join(web_seeds))
                 self.privateTorrentCheckBox.setChecked(private)
+                self.xseedCheckBox.setChecked(xseed)
                 self.md5CheckBox.setChecked(compute_md5)
                 self.sourceEdit.setText(source)
             except Exception as e:
@@ -545,6 +564,7 @@ class DottorrentGUI(Ui_MainWindow):
         self.pieceCountLabel.hide()
         self.commentEdit.setText(None)
         self.privateTorrentCheckBox.setChecked(False)
+        self.xseedCheckBox.setChecked(False)
         self.md5CheckBox.setChecked(False)
         self.sourceEdit.setText(None)
         self.torrent = None
